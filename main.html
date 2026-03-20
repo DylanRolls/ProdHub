@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BEAT LAB — EDM Production Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --panel: #111118;
+    --panel2: #16161f;
+    --border: #2a2a3a;
+    --accent: #00ffaa;
+    --accent2: #ff4d6d;
+    --accent3: #ffd700;
+    --accent4: #7b5ea7;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --kick: #ff4d6d;
+    --snare: #ffd700;
+    --hat: #00ffaa;
+    --hat2: #4dcfff;
+    --perc: #ff9d4d;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 32px 32px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0a0a0f 60%, #0f0f1a);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,255,170,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    letter-spacing: 6px;
+    color: var(--accent);
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(0,255,170,0.3);
+  }
+  .logo span { color: var(--accent2); }
+  .tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .bpm-badge {
+    display: inline-block;
+    background: var(--accent2);
+    color: #000;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-top: 12px;
+    letter-spacing: 1px;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    gap: 0;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px 22px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { color: var(--text); background: var(--panel2); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* SECTIONS */
+  .section { display: none; padding: 32px; max-width: 1100px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--accent3);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .card p { color: #c0c0d0; margin-bottom: 10px; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .why-box {
+    background: rgba(0,255,170,0.05);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .why-box strong { display: block; font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px; margin-bottom: 4px; color: var(--accent); opacity: 0.7; }
+
+  /* GRID SEQUENCER */
+  .seq-wrapper {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .seq-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .seq-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    width: 52px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .seq-label.kick { color: var(--kick); }
+  .seq-label.snare { color: var(--snare); }
+  .seq-label.hat { color: var(--hat); }
+  .seq-label.hat2 { color: var(--hat2); }
+  .seq-label.perc { color: var(--perc); }
+  .seq-grid {
+    display: flex;
+    gap: 3px;
+    flex: 1;
+  }
+  .seq-beat {
+    flex: 1;
+    height: 28px;
+    border-radius: 3px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.12s;
+    position: relative;
+  }
+  .seq-beat:hover { border-color: var(--muted); }
+  .seq-beat.active.kick { background: var(--kick); border-color: var(--kick); box-shadow: 0 0 8px rgba(255,77,109,0.5); }
+  .seq-beat.active.snare { background: var(--snare); border-color: var(--snare); box-shadow: 0 0 8px rgba(255,215,0,0.5); }
+  .seq-beat.active.hat { background: var(--hat); border-color: var(--hat); box-shadow: 0 0 8px rgba(0,255,170,0.5); }
+  .seq-beat.active.hat2 { background: var(--hat2); border-color: var(--hat2); box-shadow: 0 0 8px rgba(77,207,255,0.5); }
+  .seq-beat.active.perc { background: var(--perc); border-color: var(--perc); box-shadow: 0 0 8px rgba(255,157,77,0.5); }
+  .beat-num {
+    display: flex;
+    gap: 3px;
+    padding-left: 60px;
+    margin-bottom: 4px;
+  }
+  .beat-num span {
+    flex: 1;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+  }
+  .beat-num span.downbeat { color: var(--accent3); font-weight: 700; }
+  .seq-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 9px 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #000; font-weight: 700; }
+  .btn-primary:hover { background: #00ddaa; box-shadow: 0 0 16px rgba(0,255,170,0.4); }
+  .btn-secondary { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: var(--accent2); color: #000; font-weight: 700; }
+  .btn-danger:hover { background: #ff2255; }
+  .pattern-select {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .pattern-select:focus { outline: none; border-color: var(--accent); }
+  .playhead {
+    transition: none;
+    outline: 2px solid white;
+    outline-offset: -1px;
+  }
+  .tempo-display {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent3);
+    padding: 8px 14px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  /* FREQUENCY CHART */
+  .freq-chart {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .freq-bar-container { margin-bottom: 16px; }
+  .freq-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .freq-row:hover { background: var(--panel2); }
+  .freq-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    width: 110px;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .freq-bar-outer {
+    flex: 1;
+    height: 14px;
+    background: var(--panel2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .freq-bar-inner {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+  .freq-range {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    width: 90px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+  .freq-tooltip {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #c0c0d0;
+    margin-top: 4px;
+    display: none;
+  }
+  .freq-tooltip.visible { display: block; }
+  .freq-tooltip strong { color: var(--accent3); font-family: 'Space Mono', monospace; font-size: 11px; }
+
+  /* STRUCTURE */
+  .structure-timeline {
+    display: flex;
+    gap: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .section-block {
+    flex: 1;
+    min-width: 80px;
+    padding: 16px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .section-block:last-child { border-right: none; }
+  .section-block:hover { filter: brightness(1.2); }
+  .section-block.active-block { filter: brightness(1.3); }
+  .section-block .s-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .section-block .s-bars {
+    font-size: 11px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .section-block .s-bars span {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+  }
+  .structure-detail {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+  .structure-detail h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent3);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .element-list { list-style: none; }
+  .element-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .element-list li:last-child { border-bottom: none; }
+  .el-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    margin-top: 1px;
+  }
+  .el-text strong { color: var(--text); font-size: 13px; display: block; }
+  .el-text span { color: var(--muted); font-size: 12px; }
+
+  /* MELODY */
+  .scale-visual {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .note-block {
+    width: 52px;
+    padding: 12px 0;
+    text-align: center;
+    border-radius: 4px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.12s;
+    border: 2px solid transparent;
+  }
+  .note-block:hover { filter: brightness(1.2); transform: translateY(-2px); }
+  .note-block.root { border-color: var(--accent2); }
+  .note-block.highlight { border-color: var(--accent3); }
+  .scale-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* THEORY PILLS */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .pill:hover { transform: translateY(-1px); }
+
+  /* RHYTHM THEORY */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .mini-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px;
+  }
+  .mini-card .mc-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .mini-card p { font-size: 13px; color: #b0b0c4; }
+
+  /* WAVEFORM VIZ */
+  canvas { display: block; }
+  .piano-roll {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  /* INFO BANNER */
+  .info-banner {
+    background: rgba(123,94,167,0.15);
+    border: 1px solid rgba(123,94,167,0.4);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #c0b0d8;
+  }
+  .info-banner strong { color: var(--accent4); font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1px; display: block; margin-bottom: 4px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ABLETON TIPS */
+  .ableton-tip {
+    background: rgba(255,77,109,0.08);
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #ffb0bb;
+  }
+  .ableton-tip strong { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1px; color: var(--accent2); display: block; margin-bottom: 4px; }
+
+  /* STEP ANNOTATIONS */
+  .beat-annotations {
+    display: flex;
+    gap: 3px;
+    padding-left: 60px;
+    margin-top: 2px;
+    margin-bottom: 14px;
+  }
+  .beat-ann {
+    flex: 1;
+    text-align: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    color: transparent;
+    line-height: 1;
+  }
+  .beat-ann.show { color: var(--muted); }
+  .groove-explain {
+    background: var(--panel2);
+    border-radius: 6px;
+    padding: 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #b0b0c4;
+    display: none;
+  }
+  .groove-explain.visible { display: block; }
+  .groove-explain h4 { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">BEAT<span>LAB</span></div>
+  <div class="tagline">EDM Production Guide · Jungle · DnB · Electrofunk</div>
+  <div class="bpm-badge">140–175 BPM · Ableton Live · Serum 2</div>
+</header>
+
+<nav id="nav">
+  <button class="nav-btn active" onclick="showSection('drums')">🥁 Drums</button>
+  <button class="nav-btn" onclick="showSection('rhythm')">🎯 Rhythm Theory</button>
+  <button class="nav-btn" onclick="showSection('bass')">🔊 Bass & Freq</button>
+  <button class="nav-btn" onclick="showSection('melody')">🎵 Melody</button>
+  <button class="nav-btn" onclick="showSection('structure')">📐 Structure</button>
+  <button class="nav-btn" onclick="showSection('ableton')">⚡ Ableton Tips</button>
+</nav>
+
+<!-- ===== DRUMS ===== -->
+<div id="drums" class="section active">
+  <div class="section-title">Drum Patterns</div>
+  <div class="section-sub">Interactive sequencer · click steps to toggle · load presets</div>
+
+  <div class="info-banner">
+    <strong>🧠 Why This Matters</strong>
+    Drums are a <em>conversation between tension and release</em>. Every hit is a question or an answer. The kick anchors you in gravity. The snare lifts you off the ground. The hats fill the space between heartbeats.
+  </div>
+
+  <div class="seq-wrapper">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--accent3);letter-spacing:1px;text-transform:uppercase;">16-Step Sequencer</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <select class="pattern-select" id="patternSelect" onchange="loadPattern(this.value)">
+          <option value="">— Load Pattern —</option>
+          <option value="dnb_classic">DnB Classic Amen Feel</option>
+          <option value="dnb_neurofunk">Neurofunk / Half-Time</option>
+          <option value="jungle_rolling">Jungle Rolling</option>
+          <option value="electrofunk">Electrofunk / House Hybrid</option>
+          <option value="halftime">Trap / 140 Half-Time</option>
+        </select>
+        <div class="tempo-display" id="tempoDisplay">♩ 160 BPM</div>
+      </div>
+    </div>
+
+    <div class="beat-num" id="beatNums"></div>
+    <div id="sequencer"></div>
+    <div class="beat-annotations" id="beatAnnotations"></div>
+
+    <div class="seq-controls">
+      <button class="btn btn-primary" id="playBtn" onclick="togglePlay()">▶ PLAY</button>
+      <button class="btn btn-secondary" onclick="clearAll()">CLEAR</button>
+      <input type="range" id="tempoSlider" min="120" max="180" value="160" style="accent-color:var(--accent);width:120px;" oninput="updateTempo(this.value)">
+      <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">BPM</span>
+    </div>
+  </div>
+
+  <div class="groove-explain visible" id="patternExplain">
+    <h4>Pattern Guide</h4>
+    <p>Load a preset above to learn why each hit is placed where it is. The sequencer shows the pattern visually — beat numbers at the top correspond to 16th-note positions within one bar.</p>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px;">
+    <div class="card">
+      <div class="card-title">🔴 The Kick Drum</div>
+      <p>The kick is your <strong>gravity anchor</strong>. It tells your body where the floor is. In DnB/Jungle, kicks often land on beats <strong>1 and 3</strong> (steps 1 and 9 in 16ths), but offbeat and syncopated kicks create the rolling, hypnotic feel.</p>
+      <div class="why-box">
+        <strong>WHY</strong>
+        The kick sits in the sub-low range (50–80Hz punch, sub boom at 40–60Hz). When it hits on a downbeat, it confirms the groove. When it hits off the downbeat, it creates forward momentum — that's what makes jungle feel like it's always "about to drop."
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🟡 The Snare / Clap</div>
+      <p>Snare almost always lands on beats <strong>2 and 4</strong> (steps 5 and 13) in most EDM. This is the <strong>backbeat</strong> — it's what you clap to. In jungle/DnB, snares are sometimes rolled, ghost-noted, or pushed off the grid slightly for swing.</p>
+      <div class="why-box">
+        <strong>WHY</strong>
+        The backbeat on 2 and 4 is hardwired into human rhythm perception. It creates call-and-response with the kick. Moving it forward (rushing) creates tension. Delaying it creates a lazy, swinging feel.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🟢 Hi-Hats</div>
+      <p>Hats fill the space between kicks and snares. <strong>Closed hats</strong> on every 8th note (steps 1,3,5,7...) create steady momentum. <strong>Open hats</strong> on the "and" of beats (steps 3, 7, etc.) create swing and breathe. In jungle, hats are often <strong>syncopated and rolled</strong>.</p>
+      <div class="why-box">
+        <strong>WHY</strong>
+        Hats live in the 8–12kHz range. They are the "clock" of your groove. Varying the hat velocity (quieter on off-beats, louder on on-beats) creates that human, breathing feel — this is called <em>velocity automation</em>.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🟠 Percussion & Ghost Notes</div>
+      <p>Ghost notes are <strong>very quiet hits</strong> between main snare hits. They add humanity and groove. In DnB/Jungle, percussion like shakers, rimshots, and bongos on off-beats creates that <strong>polyrhythmic layering</strong> that makes beats feel alive.</p>
+      <div class="why-box">
+        <strong>WHY</strong>
+        Multiple rhythmic layers create a <em>gestalt</em> — the brain hears each layer individually AND as a combined pattern. This is why great jungle breaks feel incredibly dense but not cluttered.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RHYTHM THEORY ===== -->
+<div id="rhythm" class="section">
+  <div class="section-title">Rhythm Theory</div>
+  <div class="section-sub">Why rhythms work · science of groove · DnB & jungle principles</div>
+
+  <div class="card">
+    <div class="card-title">📐 The Grid: 4/4 Time Broken Down</div>
+    <div style="background:var(--panel2);border-radius:6px;padding:20px;margin-bottom:14px;overflow-x:auto;">
+      <div style="display:grid;grid-template-columns:repeat(16,1fr);gap:3px;min-width:500px;">
+        <div id="gridViz"></div>
+      </div>
+    </div>
+    <p>One bar of 4/4 music = <strong>4 beats</strong>. Each beat divides into <strong>4 sixteenth notes</strong> = 16 steps total per bar. The numbers 1–16 label each 16th note position.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px;">
+      <div style="background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);border-radius:4px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Mono',monospace;font-size:20px;color:var(--kick);">1</div>
+        <div style="font-size:11px;color:var(--muted);">Downbeat</div>
+        <div style="font-size:10px;color:#888;margin-top:2px;">Steps 1–4</div>
+      </div>
+      <div style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:4px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Mono',monospace;font-size:20px;color:var(--snare);">2</div>
+        <div style="font-size:11px;color:var(--muted);">Backbeat</div>
+        <div style="font-size:10px;color:#888;margin-top:2px;">Steps 5–8</div>
+      </div>
+      <div style="background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);border-radius:4px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Mono',monospace;font-size:20px;color:var(--kick);">3</div>
+        <div style="font-size:11px;color:var(--muted);">Mid-point</div>
+        <div style="font-size:10px;color:#888;margin-top:2px;">Steps 9–12</div>
+      </div>
+      <div style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);border-radius:4px;padding:10px;text-align:center;">
+        <div style="font-family:'Space Mono',monospace;font-size:20px;color:var(--snare);">4</div>
+        <div style="font-size:11px;color:var(--muted);">Backbeat</div>
+        <div style="font-size:10px;color:#888;margin-top:2px;">Steps 13–16</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="mini-card">
+      <div class="mc-title">⚡ Syncopation</div>
+      <p>Hitting <em>between</em> the main beats (on the "ands" and "es"). This is what makes jungle feel like it's tumbling forward. The brain expects a hit and doesn't get it — then gets a surprise hit instead. That tension→surprise is <strong>groove</strong>.</p>
+    </div>
+    <div class="mini-card">
+      <div class="mc-title">🔄 Polyrhythm</div>
+      <p>Two rhythms running at different rates simultaneously. A hat pattern in 3 against a kick in 4 creates a pattern that repeats every 12 beats. This is common in electrofunk and Afrobeat-influenced EDM. GRiZ uses this constantly.</p>
+    </div>
+    <div class="mini-card">
+      <div class="mc-title">🧲 Swing / Shuffle</div>
+      <p>Pushing even-numbered 16th notes slightly late. This creates the "drunk walking" feel of funk and jazz. In Ableton, use the <strong>Groove Pool</strong> → drag a MPC60 or Swing groove onto your MIDI clip. Start at 50% swing.</p>
+    </div>
+    <div class="mini-card">
+      <div class="mc-title">🌊 Half-Time vs Full-Time</div>
+      <p>At 160BPM, a full-time snare on beats 2&4 feels frantic. A <strong>half-time</strong> snare on beat 3 only (step 9) makes 160BPM feel like a slow, heavy 80BPM — that's neurofunk and trap at high BPMs. This is a key DnB technique.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎯 The Amen Break — Why Jungle Sounds Like Jungle</div>
+    <p>The most sampled break in history. It's a 4-bar loop with a kick, snare, and hat that are <strong>all slightly swung and syncopated</strong>. The magic:</p>
+    <ul style="margin-left:20px;margin-top:8px;color:#c0c0d0;font-size:13px;line-height:2;">
+      <li>The kick hits on unexpected 16th-note positions</li>
+      <li>The snare is pushed slightly ahead of beat 3 (creating urgency)</li>
+      <li>Ghost notes on the snare make it feel like a live drummer</li>
+      <li>Pitched up to 160–175BPM, the swing gets exaggerated → jungle "roll" feel</li>
+    </ul>
+    <div class="why-box">
+      <strong>YOUR ACTION IN ABLETON</strong>
+      Load a break sample into a Simpler in "Classic" mode. Use warp markers at 170BPM. Then cut it into slices using "Slice to new MIDI track" — now you can rearrange individual drum hits to build your own rolling patterns.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🧠 Why Kick Placement Matters — Neurologically</div>
+    <p>The low-frequency bass of a kick drum is felt as much as heard — sub frequencies below 80Hz are processed partly by the <strong>somatosensory system</strong> (touch). This is why clubs have big subs: it's a physical, not just auditory, experience.</p>
+    <p style="margin-top:8px;">When the kick hits on a <strong>predictable downbeat</strong>, the brain releases dopamine at the moment of confirmation. When it hits just slightly off the expected beat (syncopation), the brain gets a small dopamine spike from the surprise. <em>That's groove.</em></p>
+    <div class="why-box">
+      <strong>THE SCIENCE</strong>
+      Research in music cognition (Grahn & Brett, 2007) shows the basal ganglia — the brain's rhythm center — fires in sync with beats. Syncopation activates this system MORE than a straight beat because it requires prediction + correction. That extra brain activity = the feeling of being "locked in."
+    </div>
+  </div>
+</div>
+
+<!-- ===== BASS ===== -->
+<div id="bass" class="section">
+  <div class="section-title">Bass & Frequencies</div>
+  <div class="section-sub">What to play, where to play it, and why it hits hard</div>
+
+  <div class="info-banner">
+    <strong>🔊 The Golden Rule of Bass</strong>
+    Bass frequencies carry the emotional weight of your track. Sub-bass is felt. Mid-bass is heard. Together they create a physical experience. In DnB and jungle, bass is as melodic as any instrument.
+  </div>
+
+  <div class="freq-chart">
+    <div class="card-title">Frequency Map — Click any range to learn more</div>
+    <div class="freq-bar-container" id="freqBars"></div>
+    <div class="freq-tooltip" id="freqTooltip"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🎸 Sub Bass (20–80Hz)</div>
+      <p>This is the <strong>physical punch</strong>. In Serum 2, use a <strong>sine wave</strong> or triangle for your sub layer. Keep it simple — one or two notes. Sub bass rarely moves around. It sits under the whole track like a foundation.</p>
+      <p style="margin-top:8px;">Best notes for sub: <strong>C1, D1, F1, G1</strong> — these sit in the sweet spot where subs are felt on big systems without becoming mud.</p>
+      <div class="ableton-tip">
+        <strong>⚡ ABLETON TIP</strong>
+        Use a Utility device on your sub channel and set it to Mono. Sub frequencies below 80Hz should always be mono — stereo sub causes phase cancellation and loses energy on club systems.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎛 Mid-Bass (80–300Hz)</div>
+      <p>This is where basslines are <em>heard</em> rather than felt. Reese basses, wobble basses, and growl basses live here. In Serum 2: start with a <strong>Wavetable</strong> with detuned saws, apply a <strong>bandpass filter</strong> sweeping 100–400Hz for movement.</p>
+      <p style="margin-top:8px;">Classic Neurofunk bass: two oscillators detuned 5–10 cents apart with heavy distortion and a movement LFO on the filter cutoff synced to the beat.</p>
+      <div class="ableton-tip">
+        <strong>⚡ ABLETON TIP</strong>
+        Layer your sub (sine, mono) and mid-bass (wavetable, can be stereo) on separate tracks. Use a high-pass filter at 80Hz on the mid-bass to let the sub breathe. This is called "bass layering."
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎵 What Notes to Use for Basslines</div>
+    <p>Your bassline should almost always <strong>follow the root notes of your chords or key</strong>. If you're in A minor, the safest bass notes are: <strong>A, C, D, E, G</strong>. The most powerful movement is from the <strong>root (A) up to the fifth (E)</strong> — this is the basis of most bass riffs in every genre of music.</p>
+
+    <div style="background:var(--panel2);border-radius:6px;padding:18px;margin-top:14px;">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">A Minor Bassline — Octave Register Guide</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="bassNoteViz"></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:8px;">Click a note to see when to use it</div>
+      <div id="bassNoteInfo" style="margin-top:10px;background:var(--panel);border-radius:4px;padding:12px;font-size:13px;color:#c0c0d0;display:none;"></div>
+    </div>
+
+    <div class="why-box" style="margin-top:14px;">
+      <strong>RHYTHM OF THE BASSLINE</strong>
+      The most powerful thing you can do for a bassline is <strong>lock it to the kick</strong>. When the kick and bass hit together, it's called "kick-bass lock" — it creates a feeling of unstoppable forward momentum. In DnB, the bass often mirrors the kick pattern with held notes between the kicks for continuity.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔊 Serum 2 Bass Patches — Starting Points</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--panel2);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px;">REESE BASS (DnB Classic)</div>
+        <p style="font-size:12px;color:#b0b0c4;">Osc A: Saw · Osc B: Saw, detune +7 cents · Filter: Low Pass 24dB, cutoff ~800Hz · Filter ENV: medium attack, fast decay · LFO1 on Filter Cutoff synced to 1/4 · Add Distortion (Hyper/Dimension) · Width: 30%</p>
+      </div>
+      <div style="background:var(--panel2);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:6px;">ELECTROFUNK GROWL BASS</div>
+        <p style="font-size:12px;color:#b0b0c4;">Osc A: Wavetable (Sci-Fi or Talking), morph position on LFO · Filter: Band Pass, Q=1.5, center ~250Hz · Envelope mod on wavetable position · Add Chorus (subtle) · Pitch mod via mod wheel</p>
+      </div>
+      <div style="background:var(--panel2);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);margin-bottom:6px;">PURE SUB LAYER</div>
+        <p style="font-size:12px;color:#b0b0c4;">Osc A: Sine · No filter needed · Amp ENV: slow attack (10ms), medium decay, sustain 80%, long release · No FX except maybe subtle saturation · Keep it mono · Volume ride it under the mid-bass layer</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MELODY ===== -->
+<div id="melody" class="section">
+  <div class="section-title">Melody & Counter-Melody</div>
+  <div class="section-sub">Building emotion · scales that work · call and response</div>
+
+  <div class="info-banner">
+    <strong>🎵 You Don't Need Theory — You Need Ears</strong>
+    Music theory describes patterns that <em>already sound good</em>. You don't need to memorize everything — you need to understand <em>why</em> certain notes feel like home, and why others feel like tension. Below is a visual map.
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎹 Choose Your Scale — Click to highlight</div>
+    <div class="pill-row" id="scalePills"></div>
+    <div id="scaleDisplay"></div>
+    <div id="scaleExplain" style="background:var(--panel2);border-radius:6px;padding:14px;font-size:13px;color:#b0b0c4;margin-top:10px;display:none;"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🎯 Melody Construction Rules</div>
+      <ul style="margin-left:18px;color:#c0c0d0;font-size:13px;line-height:2.2;">
+        <li><strong>Start and end on the root note</strong> — creates resolution</li>
+        <li><strong>Use mostly steps</strong> (adjacent notes), <strong>leap occasionally</strong> for drama</li>
+        <li><strong>Peak once</strong> — highest note should happen once, at the climax</li>
+        <li><strong>Repeat motifs</strong> — a 2-4 note idea that comes back (this is what hooks are made of)</li>
+        <li><strong>Leave space</strong> — silence IS melody. Let notes breathe.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🔄 Counter-Melody Principles</div>
+      <ul style="margin-left:18px;color:#c0c0d0;font-size:13px;line-height:2.2;">
+        <li><strong>Move opposite</strong> to the main melody (if main goes up, counter goes down)</li>
+        <li><strong>Fill silences</strong> — counter-melody lives in the gaps of the main melody</li>
+        <li><strong>Different register</strong> — main melody in mids, counter in highs or vice versa</li>
+        <li><strong>Same key, different rhythm</strong> — syncopate the counter against the main</li>
+        <li><strong>Clozee technique:</strong> main melody in a pad, counter in a plucked synth with stereo motion</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🌊 Tension & Resolution — The Emotional Engine</div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:16px;">
+      <div style="background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.3);border-radius:6px;padding:16px;text-align:center;">
+        <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--accent2);margin-bottom:6px;">TENSION NOTES</div>
+        <div style="font-size:13px;color:#c0c0d0;">2nd, 6th, 7th degrees of the scale<br><br>Use these to create unease, anticipation, forward pull</div>
+      </div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--muted);">→</div>
+      <div style="background:rgba(0,255,170,0.1);border:1px solid rgba(0,255,170,0.3);border-radius:6px;padding:16px;text-align:center;">
+        <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);margin-bottom:6px;">RESOLUTION NOTES</div>
+        <div style="font-size:13px;color:#c0c0d0;">Root, 3rd, 5th (the chord tones)<br><br>Use these to create satisfaction, landing, home base</div>
+      </div>
+    </div>
+    <div class="why-box">
+      <strong>THE MUSICAL PAYOFF</strong>
+      The emotional impact of music comes from the distance between tension and resolution. The longer you stay on a tension note before resolving, the bigger the emotional payoff when it lands. GRiZ's sax melodies do this masterfully — long winding phrases that always eventually come home.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎛 Translating Melody to Serum 2</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--panel2);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px;">LEAD SYNTH (Clozee-style organic lead)</div>
+        <p style="font-size:12px;color:#b0b0c4;">Osc A: Wavetable (Vocal or Organic) · morph slowly via LFO2 (unsynced, slow) · Filter: Low Pass 18dB, cutoff mod by envelope (high cutoff on attack, closing on decay) · Reverb: large hall, 30% wet · Delay: 3/16 dotted (creates that rhythmic trail)</p>
+      </div>
+      <div style="background:var(--panel2);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--hat2);margin-bottom:6px;">COUNTER MELODY (Electric Mantis style)</div>
+        <p style="font-size:12px;color:#b0b0c4;">Osc A: Plucked wavetable (fast attack, fast decay) · Osc B: detuned sub octave for warmth · Filter: Band Pass, narrow, opening with each note · Pan automation: slowly sweep L→R over 4 bars · Shorter reverb than main lead · Play it 1-2 octaves above the main melody</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STRUCTURE ===== -->
+<div id="structure" class="section">
+  <div class="section-title">Track Structure</div>
+  <div class="section-sub">The science of how a track builds, releases, and moves a crowd</div>
+
+  <div class="info-banner">
+    <strong>📐 Structure Is Emotional Architecture</strong>
+    A track structure isn't arbitrary — it mirrors the arc of human emotional experience: anticipation → excitement → satisfaction → reflection. Every great track takes you on a journey. The map below shows a proven DnB/jungle structure.
+  </div>
+
+  <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:1px;text-transform:uppercase;">Click a section to explore</div>
+  <div class="structure-timeline" id="structureTimeline"></div>
+  <div class="structure-detail" id="structureDetail"></div>
+
+  <div class="card" style="margin-top:20px;">
+    <div class="card-title">🧠 The Science of the Drop</div>
+    <p>The "drop" in EDM triggers a measurable neurological response. Research (Salimpoor et al., 2011) shows that anticipated musical moments — especially the moment of release after tension — cause a <strong>dopamine spike</strong> in the nucleus accumbens. This is why drops feel physically euphoric.</p>
+    <p style="margin-top:8px;">To maximize this effect:</p>
+    <ul style="margin-left:20px;color:#c0c0d0;font-size:13px;line-height:2.2;margin-top:8px;">
+      <li><strong>Build longer</strong> for a bigger drop. 16 bars of tension → bigger payoff than 4 bars</li>
+      <li><strong>Strip elements</strong> before the drop (remove bass, reduce elements to just a hi-hat or riser)</li>
+      <li><strong>Use a riser + noise sweep</strong> in the 2 bars before the drop (creates predictive tension)</li>
+      <li><strong>Add a "crash" transient</strong> exactly on beat 1 of the drop</li>
+      <li><strong>Re-introduce elements</strong> sequentially after the drop — kick first, then bass, then everything</li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">⚡ Energy Management</div>
+      <p>Think of your track's energy as a waveform — it should have peaks and troughs. <strong>Constant high energy = listener fatigue</strong>. Every high needs a low to contrast it. The breakdown creates the low. The drop creates the high.</p>
+      <p style="margin-top:8px;">GRiZ tracks often have 2–3 "levels" of energy with mini-builds within each section — this keeps the listener engaged for 5+ minutes.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🔢 The 8-Bar Rule</div>
+      <p>Almost all Western pop and EDM is built in <strong>multiples of 8 bars</strong>: 8, 16, 32, 64. Your brain is conditioned to expect changes at these intervals. Breaking the rule (a 12-bar section) creates surprise. Following it creates comfort. <strong>Both are tools.</strong></p>
+      <p style="margin-top:8px;">In DnB: a standard track is usually 32-bar sections. Jungle often plays with 8-bar phrases inside larger 32-bar blocks.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ABLETON ===== -->
+<div id="ableton" class="section">
+  <div class="section-title">Ableton + Serum 2 Workflow</div>
+  <div class="section-sub">Practical tips for building your tracks faster</div>
+
+  <div class="card">
+    <div class="card-title">🗂 Session View vs Arrangement View</div>
+    <p><strong>Session View</strong> (the grid of clips) is for <em>composing and jamming</em> — try ideas, loop sections, build patterns freely. <strong>Arrangement View</strong> (the timeline) is for <em>structuring and finishing</em> your track.</p>
+    <p style="margin-top:8px;">Workflow: Build your loops in Session View → when you're happy, hit Record in Arrangement View while jamming your Session → you now have a rough arrangement to edit and refine.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🥁 Drum Workflow in Ableton</div>
+      <ul style="margin-left:18px;color:#c0c0d0;font-size:13px;line-height:2.2;">
+        <li>Use <strong>Drum Rack</strong> for main beat (each pad = one drum sound)</li>
+        <li>Use <strong>Simpler</strong> in Classic mode for break samples</li>
+        <li><strong>Groove Pool</strong>: drag MPC60 groove at 50–70% for swing</li>
+        <li>Automate <strong>velocity</strong> on hats (alt-click velocity lane in MIDI editor)</li>
+        <li>Use <strong>"Slice to MIDI"</strong> on breaks to chop and rearrange</li>
+        <li>Layer 2–3 kicks: one sub kick, one punchy mid kick</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🎛 Serum 2 in Ableton</div>
+      <ul style="margin-left:18px;color:#c0c0d0;font-size:13px;line-height:2.2;">
+        <li>Use <strong>MIDI clips</strong> to trigger Serum — not audio clips</li>
+        <li><strong>Map macros</strong> to filter cutoff and LFO rate for live automation</li>
+        <li>Use Ableton's <strong>Envelope Follower</strong> (Max4Live) to sidechain Serum filter to kick</li>
+        <li>Automate <strong>wavetable position</strong> in Serum via MIDI CC for evolving basses</li>
+        <li>Use <strong>Return tracks</strong> for shared reverb/delay instead of per-track FX</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🎚 Mixing Fundamentals for DnB/Jungle</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="background:var(--panel2);border-radius:5px;padding:12px;display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--kick);width:70px;flex-shrink:0;margin-top:1px;">KICK</div>
+        <div style="font-size:12px;color:#b0b0c4;">Keep sub punchy with a transient shaper. High-pass everything else at 40Hz. Side-chain compress the bass to the kick (LFO Tool or Ableton Compressor with sidechain input from kick).</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:5px;padding:12px;display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);width:70px;flex-shrink:0;margin-top:1px;">BASS</div>
+        <div style="font-size:12px;color:#b0b0c4;">Sub layer: mono, no FX, high-pass at 40Hz. Mid-bass: stereo ok, high-pass at 80Hz. Keep total bass peak at -6dB on master. Use a limiter on bass bus to catch transients.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:5px;padding:12px;display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);width:70px;flex-shrink:0;margin-top:1px;">LEADS</div>
+        <div style="font-size:12px;color:#b0b0c4;">High-pass at 300Hz (let bass own the lows). Add subtle saturation (Saturator in Ableton) for harmonics. Use EQ to carve out space so leads don't clash with bass or hats.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:5px;padding:12px;display:flex;gap:12px;align-items:flex-start;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--hat2);width:70px;flex-shrink:0;margin-top:1px;">HATS/PERC</div>
+        <div style="font-size:12px;color:#b0b0c4;">High-pass at 2kHz. Keep peaks at -12dB so they sit above everything without harshness. Use a wide stereo spread on hats but keep snare and kick centered (mono below 200Hz).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🚀 Your First Track — Step by Step</div>
+    <ol style="margin-left:20px;color:#c0c0d0;font-size:13px;line-height:2.4;counter-reset:steps;">
+      <li>Set your BPM (try 170 for jungle). Set your key (A minor is classic DnB territory).</li>
+      <li>Make a 1-bar drum loop first — just kick + snare. Get the groove right before adding anything else.</li>
+      <li>Add hats to the drum loop. Experiment with the groove pool.</li>
+      <li>Add a simple sub bass line (2–4 notes, root and fifth, locks to kick)</li>
+      <li>Add a mid-bass layer in Serum 2</li>
+      <li>Build a 4-bar loop of just drums + bass. Listen and feel it.</li>
+      <li>Add a simple 2-bar lead melody (4–6 notes max, in your key)</li>
+      <li>Add a counter melody or chord pad on top</li>
+      <li>Start building your arrangement: intro → build → drop → breakdown → drop 2 → outro</li>
+      <li>Add automation: filter sweeps, volume rides, riser effects before drops</li>
+    </ol>
+    <div class="why-box" style="margin-top:14px;">
+      <strong>ADHD TIP</strong>
+      Work in 25-minute blocks with a timer (Pomodoro). Start with drums EVERY time — it's the most immediate, tactile, gratifying part. Let the groove pull you in. If you're stuck on a melody, switch to drums. The beat will unlock the melody.
+    </div>
+  </div>
+</div>
+
+<script>
+// ======= NAV =======
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ======= SEQUENCER =======
+const ROWS = [
+  { id: 'kick', label: 'KICK' },
+  { id: 'snare', label: 'SNARE' },
+  { id: 'hat', label: 'C.HAT' },
+  { id: 'hat2', label: 'O.HAT' },
+  { id: 'perc', label: 'PERC' },
+];
+let steps = {};
+ROWS.forEach(r => { steps[r.id] = new Array(16).fill(false); });
+let isPlaying = false;
+let currentStep = 0;
+let intervalId = null;
+let bpm = 160;
+
+const PATTERNS = {
+  dnb_classic: {
+    kick:  [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+    snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hat:   [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+    hat2:  [0,0,0,0, 0,0,1,0, 0,0,0,0, 0,0,0,0],
+    perc:  [0,0,0,1, 0,0,0,0, 0,0,0,1, 0,1,0,0],
+    explain: `<h4>DnB Classic Pattern</h4><p>Kick on beats 1 and 3 (steps 1 and 9). Snare on beats 2 and 4 (steps 5 and 13). This is the <strong>foundational backbeat</strong>. Closed hats on every 8th note keep the momentum. Open hat on the "and" of beat 2 (step 7) creates breathe. The perc ghost notes on steps 4, 12, and 14 add syncopation.</p>`
+  },
+  dnb_neurofunk: {
+    kick:  [1,0,0,0, 0,0,0,1, 0,0,1,0, 0,0,0,0],
+    snare: [0,0,0,0, 0,0,0,0, 0,1,0,0, 0,0,0,0],
+    hat:   [0,1,0,1, 0,1,0,1, 0,1,0,1, 0,1,0,1],
+    hat2:  [0,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,0,1],
+    perc:  [0,0,0,0, 0,1,0,0, 0,0,0,0, 0,0,1,0],
+    explain: `<h4>Neurofunk Half-Time Pattern</h4><p>The snare only hits on <strong>beat 3</strong> (step 9) — this is the half-time feel. At 170BPM, this makes the groove feel slow and heavy like 85BPM. The kick pattern is <strong>syncopated</strong> — steps 1, 8, and 11 are unexpected positions that create forward momentum without a predictable downbeat. This is the neurofunk signature: heavy, lurching, mechanical.</p>`
+  },
+  jungle_rolling: {
+    kick:  [1,0,0,0, 0,0,1,0, 0,0,0,0, 1,0,0,0],
+    snare: [0,0,0,1, 0,1,0,0, 0,0,1,0, 0,0,1,0],
+    hat:   [1,1,0,1, 1,0,1,1, 1,1,0,1, 1,0,1,1],
+    hat2:  [0,0,1,0, 0,0,0,0, 0,0,1,0, 0,1,0,0],
+    perc:  [0,1,0,0, 1,0,0,1, 0,1,0,0, 0,0,0,1],
+    explain: `<h4>Jungle Rolling Pattern</h4><p>This approximates the <strong>Amen break feel</strong>. Notice how the kick and snare are scattered across multiple unexpected positions — no single hit is where you'd expect it. The hats are dense and syncopated. This creates the <em>rolling, tumbling</em> sensation that defines jungle. The snare ghosting (multiple hits at low velocity in a real recording) is suggested by the multiple snare hits. In Ableton: apply 60% MPC60 swing to this pattern for the authentic jungle roll.</p>`
+  },
+  electrofunk: {
+    kick:  [1,0,0,0, 0,0,0,0, 0,0,0,0, 1,0,1,0],
+    snare: [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    hat:   [1,0,1,0, 1,0,1,0, 1,0,1,0, 1,0,1,0],
+    hat2:  [0,0,0,0, 0,0,0,1, 0,0,0,0, 0,0,0,0],
+    perc:  [0,1,0,0, 0,0,0,0, 1,0,0,1, 0,0,0,0],
+    explain: `<h4>Electrofunk / House Hybrid Pattern</h4><p>Kick on beat 1 is solid, but then the <strong>anticipated kick</strong> on step 13 (the "and" of 3) and step 15 pushes forward momentum — this is the disco/funk influence in electrofunk. Snare stays on 2 and 4 for danceability. The open hat on step 8 (the "and" of beat 2) gives that classic funk breathe. GRiZ uses this type of foundational pattern with live band elements layered on top.</p>`
+  },
+  halftime: {
+    kick:  [1,0,0,0, 0,0,0,0, 0,0,0,1, 0,0,0,0],
+    snare: [0,0,0,0, 0,0,0,0, 0,1,0,0, 0,0,0,0],
+    hat:   [1,0,0,1, 0,0,1,0, 0,1,0,0, 1,0,0,0],
+    hat2:  [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,1,0,0],
+    perc:  [0,0,1,0, 0,0,0,0, 0,0,0,0, 0,0,1,0],
+    explain: `<h4>Trap / 140 Half-Time Pattern</h4><p>At 140BPM, this half-time feel with a <strong>snare on step 9</strong> (beat 2.5 in half-time perspective) creates maximum drama and space. The kick hits step 1 and step 12 (a late-3 placement) — that extra kick before beat 4 creates an unexpected stumble that's very trap-influenced. This pattern works great for 140BPM bass music and is common in the heavier end of electrofunk.</p>`
+  }
+};
+
+function buildSequencer() {
+  const seq = document.getElementById('sequencer');
+  const beatNums = document.getElementById('beatNums');
+  const beatAnns = document.getElementById('beatAnnotations');
+  seq.innerHTML = '';
+  beatNums.innerHTML = '';
+  beatAnns.innerHTML = '';
+
+  const beatLabels = ['1','e','+','a', '2','e','+','a', '3','e','+','a', '4','e','+','a'];
+  const downbeats = [0,4,8,12];
+
+  beatLabels.forEach((l, i) => {
+    const s = document.createElement('span');
+    s.textContent = l;
+    if (downbeats.includes(i)) s.className = 'downbeat';
+    beatNums.appendChild(s);
+  });
+
+  ROWS.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'seq-row';
+    const label = document.createElement('div');
+    label.className = `seq-label ${row.id}`;
+    label.textContent = row.label;
+    rowEl.appendChild(label);
+    const grid = document.createElement('div');
+    grid.className = 'seq-grid';
+    for (let i = 0; i < 16; i++) {
+      const beat = document.createElement('div');
+      beat.className = `seq-beat ${row.id}${steps[row.id][i] ? ' active' : ''}`;
+      beat.dataset.row = row.id;
+      beat.dataset.step = i;
+      beat.onclick = () => toggleStep(row.id, i, beat);
+      grid.appendChild(beat);
+    }
+    rowEl.appendChild(grid);
+    seq.appendChild(rowEl);
+  });
+}
+
+function toggleStep(rowId, stepIdx, el) {
+  steps[rowId][stepIdx] = !steps[rowId][stepIdx];
+  el.classList.toggle('active', steps[rowId][stepIdx]);
+}
+
+function loadPattern(name) {
+  if (!name || !PATTERNS[name]) return;
+  const p = PATTERNS[name];
+  ROWS.forEach(row => {
+    steps[row.id] = p[row.id].map(v => v === 1);
+  });
+  const explain = document.getElementById('patternExplain');
+  explain.innerHTML = p.explain;
+  explain.className = 'groove-explain visible';
+  buildSequencer();
+}
+
+function clearAll() {
+  ROWS.forEach(r => { steps[r.id] = new Array(16).fill(false); });
+  document.getElementById('patternSelect').value = '';
+  document.getElementById('patternExplain').innerHTML = '<h4>Pattern Guide</h4><p>Load a preset above to learn why each hit is placed where it is.</p>';
+  buildSequencer();
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('playBtn');
+  if (isPlaying) {
+    btn.textContent = '⏸ STOP';
+    btn.style.background = 'var(--accent2)';
+    currentStep = 0;
+    const stepMs = (60000 / bpm) / 4;
+    intervalId = setInterval(advanceStep, stepMs);
+  } else {
+    btn.textContent = '▶ PLAY';
+    btn.style.background = 'var(--accent)';
+    clearInterval(intervalId);
+    document.querySelectorAll('.seq-beat').forEach(b => b.classList.remove('playhead'));
+  }
+}
+
+function advanceStep() {
+  document.querySelectorAll('.seq-beat').forEach(b => b.classList.remove('playhead'));
+  const allBeats = document.querySelectorAll('.seq-beat');
+  ROWS.forEach((row, ri) => {
+    const beat = allBeats[ri * 16 + currentStep];
+    if (beat) beat.classList.add('playhead');
+  });
+  currentStep = (currentStep + 1) % 16;
+}
+
+function updateTempo(val) {
+  bpm = parseInt(val);
+  document.getElementById('tempoDisplay').textContent = `♩ ${bpm} BPM`;
+  if (isPlaying) {
+    clearInterval(intervalId);
+    const stepMs = (60000 / bpm) / 4;
+    intervalId = setInterval(advanceStep, stepMs);
+  }
+}
+
+buildSequencer();
+
+// ======= FREQ BARS =======
+const freqData = [
+  { name: 'Sub Bass', range: '20–80 Hz', pct: 15, color: '#ff4d6d',
+    info: '<strong>SUB BASS (20–80 Hz)</strong><br>The physical foundation. Felt more than heard. In Serum 2: use a sine wave. Keep it mono. This is where your sub kick and sub bass notes live. In A minor, play A1, C1, E1. Too much here creates mud — use a spectrum analyzer to manage this zone.' },
+  { name: 'Upper Bass', range: '80–300 Hz', pct: 30, color: '#ff9d4d',
+    info: '<strong>UPPER BASS (80–300 Hz)</strong><br>The warmth and body of your bass. Reese basses and wobble basses dominate here. This range is what you hear in headphones. Boost 100–200Hz for warmth. Cut 200–300Hz if things sound "boomy." This range can clash with kick drums — sidechain compression helps.' },
+  { name: 'Low Mids', range: '300–800 Hz', pct: 20, color: '#ffd700',
+    info: '<strong>LOW MIDS (300–800 Hz)</strong><br>The "honk" zone. Too much here = muddy, boxy sound. Too little = thin. Most bass sounds should be high-passed above 300Hz UNLESS you want warmth. Lead synths often start here. In DnB, this range needs careful EQ to avoid clash between bass harmonics and mid elements.' },
+  { name: 'Mids', range: '800 Hz–3 kHz', pct: 35, color: '#00ffaa',
+    info: '<strong>MIDS (800 Hz–3 kHz)</strong><br>The presence zone. Human voice, synth leads, and snare body live here. Most melody lives in 1–3kHz. Boost 1–2kHz on leads for presence and cut-through. Cut 1kHz on bass to create space for leads. This range carries the most sonic information.' },
+  { name: 'Upper Mids', range: '3–8 kHz', pct: 25, color: '#4dcfff',
+    info: '<strong>UPPER MIDS (3–8 kHz)</strong><br>Clarity and edge. High synth leads, cymbal body, and synth attack click live here. Boost 4–6kHz for snap and definition on your leads. Harsh digital distortion artifacts often appear at 3–5kHz — use a dynamic EQ to tame peaks.' },
+  { name: 'High End', range: '8–20 kHz', pct: 40, color: '#b070ff',
+    info: '<strong>HIGH END (8–20 kHz)</strong><br>Air and shimmer. Hi-hats dominate 8–12kHz. Above 12kHz is "air" — boost this slightly on your master for openness. Most bass and low synths should be high-pass filtered here to remove any unnecessary high content. Too much here = harsh and tiring.' },
+];
+
+const freqContainer = document.getElementById('freqBars');
+const freqTooltip = document.getElementById('freqTooltip');
+freqData.forEach(f => {
+  const row = document.createElement('div');
+  row.className = 'freq-row';
+  row.innerHTML = `<div class="freq-name">${f.name}</div><div class="freq-bar-outer"><div class="freq-bar-inner" style="width:${f.pct}%;background:${f.color};"></div></div><div class="freq-range">${f.range}</div>`;
+  row.onclick = () => {
+    freqTooltip.innerHTML = f.info;
+    freqTooltip.className = 'freq-tooltip visible';
+    // expand bar
+    row.querySelector('.freq-bar-inner').style.width = Math.min(f.pct * 2.5, 100) + '%';
+    setTimeout(() => { row.querySelector('.freq-bar-inner').style.width = f.pct + '%'; }, 2000);
+  };
+  freqContainer.appendChild(row);
+});
+
+// ======= BASS NOTES =======
+const bassNotes = [
+  { note: 'A0', label: 'A0', color: '#ff4d6d', info: 'Sub-sub bass. Felt but barely heard. Only for massive systems. Use sparingly as root anchor.' },
+  { note: 'C1', label: 'C1', color: '#ff6a35', info: 'Deep sub. Great for minor key drops. Pairs beautifully with A minor as the relative major root.' },
+  { note: 'A1', label: 'A1', color: '#ff9d4d', info: 'Main sub note for A minor. This is your bass home base. Most of your sub bass should sit here.' },
+  { note: 'E1', label: 'E1', color: '#ffd700', info: 'The fifth of A — second most stable note. Moving from A1 to E1 is the most powerful two-note bass movement in A minor.' },
+  { note: 'A2', label: 'A2', color: '#00ffaa', info: 'Octave up from A1. This is where your mid-bass (Reese, growl) should be centered. Heard AND felt.' },
+  { note: 'D2', label: 'D2', color: '#4dcfff', info: 'The 4th degree of A minor. Great for bass movement and tension before resolving to A or E.' },
+  { note: 'G2', label: 'G2', color: '#b070ff', info: 'The 7th degree — tension note. Leads naturally to A. Great as a passing note in your bassline.' },
+  { note: 'A3', label: 'A3', color: '#7b9fff', info: 'Upper register bass — mostly heard, not felt. Use for more melodic bass movements or counter-bass lines in the upper range.' },
+];
+
+const bviz = document.getElementById('bassNoteViz');
+const bnInfo = document.getElementById('bassNoteInfo');
+bassNotes.forEach(n => {
+  const el = document.createElement('div');
+  el.className = 'note-block';
+  el.style.background = n.color + '22';
+  el.style.color = n.color;
+  el.style.borderColor = n.color + '44';
+  el.textContent = n.label;
+  el.onclick = () => { bnInfo.innerHTML = `<strong style="color:${n.color}">${n.note}</strong> — ${n.info}`; bnInfo.style.display = 'block'; };
+  bviz.appendChild(el);
+});
+
+// ======= SCALES =======
+const scales = [
+  {
+    name: 'A Minor', color: '#ff4d6d',
+    notes: ['A','B','C','D','E','F','G'],
+    degrees: ['1 Root','2 Tension','3 Minor 3rd','4 Fourth','5 Fifth','6 Sixth','7 Seventh'],
+    colors: ['#ff4d6d','#ff9d4d','#ffd700','#00ffaa','#4dcfff','#b070ff','#ff70aa'],
+    info: 'The most popular key in DnB and jungle. Dark, emotional, and powerful. Clozee, Chase & Status, and most neurofunk is in or around A minor. The minor 3rd (C) gives it darkness. The fifth (E) gives it power. Perfect for bass-heavy music.'
+  },
+  {
+    name: 'D Minor', color: '#ff9d4d',
+    notes: ['D','E','F','G','A','Bb','C'],
+    degrees: ['1 Root','2','b3 Minor 3rd','4','5 Fifth','b6','b7'],
+    colors: ['#ff9d4d','#ffd700','#00ffaa','#4dcfff','#b070ff','#ff70aa','#ff4d6d'],
+    info: 'Slightly warmer than A minor. Used heavily in electrofunk and neo-soul-influenced electronic music. GRiZ often works in D minor or D major. The Bb (flat 6) adds a soulful, almost blues quality.'
+  },
+  {
+    name: 'A Phrygian', color: '#b070ff',
+    notes: ['A','Bb','C','D','E','F','G'],
+    degrees: ['1 Root','b2 DARK','b3','4','5','b6','b7'],
+    colors: ['#b070ff','#ff4d6d','#ffd700','#00ffaa','#4dcfff','#ff70aa','#ff9d4d'],
+    info: 'The "Spanish/cinematic" mode. The flat 2nd (Bb) creates extreme tension and darkness. Common in neurofunk and horror-adjacent DnB. Electric Mantis uses Phrygian-influenced sounds for that eerie, psychedelic quality. The Bb resolving to A is extremely powerful.'
+  },
+  {
+    name: 'A Minor Pentatonic', color: '#00ffaa',
+    notes: ['A','C','D','E','G','—','—'],
+    degrees: ['1 Root','b3','4','5','b7','—','—'],
+    colors: ['#00ffaa','#ffd700','#4dcfff','#ff4d6d','#b070ff','#333','#333'],
+    info: 'The 5-note scale. ZERO bad notes — every note works with every other note. This is where beginners should start ALL melodies. Can\'t go wrong. The blues scale adds a flat 5 (Eb) to this scale for that funky blues tension. Perfect for Sunsquabi / electrofunk melody writing.'
+  },
+  {
+    name: 'A Minor Blues', color: '#4dcfff',
+    notes: ['A','C','D','Eb','E','G','—'],
+    degrees: ['1','b3','4','b5 BLUE','5','b7','—'],
+    colors: ['#4dcfff','#ffd700','#00ffaa','#ff4d6d','#ff9d4d','#b070ff','#333'],
+    info: 'Add the "blue note" (flat 5, Eb) to the pentatonic. This Eb creates that classic blues tension that electrofunk and funk-influenced electronic music thrives on. GRiZ\'s sax lines use this scale constantly. The Eb to E movement (blue note to perfect fifth) is one of the most satisfying resolutions in music.'
+  },
+];
+
+const scalePills = document.getElementById('scalePills');
+let selectedScale = null;
+
+scales.forEach(scale => {
+  const pill = document.createElement('div');
+  pill.className = 'pill';
+  pill.textContent = scale.name;
+  pill.style.color = scale.color;
+  pill.style.borderColor = scale.color + '55';
+  pill.style.background = scale.color + '11';
+  pill.onclick = () => {
+    selectedScale = scale;
+    renderScale(scale);
+    scalePills.querySelectorAll('.pill').forEach(p => p.style.fontWeight = '400');
+    pill.style.fontWeight = '700';
+    pill.style.background = scale.color + '22';
+  };
+  scalePills.appendChild(pill);
+});
+
+function renderScale(scale) {
+  const disp = document.getElementById('scaleDisplay');
+  const explain = document.getElementById('scaleExplain');
+  disp.innerHTML = '';
+  const row = document.createElement('div');
+  row.className = 'scale-visual';
+  scale.notes.forEach((note, i) => {
+    if (note === '—') return;
+    const el = document.createElement('div');
+    el.className = 'note-block';
+    el.style.background = scale.colors[i] + '22';
+    el.style.color = scale.colors[i];
+    el.style.border = `2px solid ${scale.colors[i]}44`;
+    el.innerHTML = `<div>${note}</div><div style="font-size:8px;opacity:0.7;margin-top:4px">${scale.degrees[i].split(' ')[0]}</div>`;
+    row.appendChild(el);
+  });
+  disp.appendChild(row);
+  explain.innerHTML = scale.info;
+  explain.style.display = 'block';
+}
+
+// ======= STRUCTURE =======
+const structureSections = [
+  { name: 'INTRO', bars: '8–16', color: '#2a3a4a', textColor: '#4dcfff',
+    title: 'Intro (8–16 bars)',
+    elements: [
+      { icon: '🥁', color: '#ff4d6d', title: 'Sparse percussion', desc: 'Often just hats and a simple kick. No full beat yet. Creates anticipation.' },
+      { icon: '🌊', color: '#4dcfff', title: 'Atmosphere / Pad', desc: 'A slowly evolving pad or texture establishes the key and mood. Long reverb tails.' },
+      { icon: '🎚', color: '#00ffaa', title: 'Rising elements', desc: 'Filters opening, elements slowly introduced. Brain learns the key and tempo before the beat drops.' },
+      { icon: '🧠', color: '#b070ff', title: 'Why it works', desc: 'Primes the listener. Sets expectations. The longer and more patient the intro, the more powerful the drop feels.' },
+    ]
+  },
+  { name: 'BUILD', bars: '8–16', color: '#2a2a1a', textColor: '#ffd700',
+    title: 'Build / Pre-Drop (8–16 bars)',
+    elements: [
+      { icon: '🥁', color: '#ff4d6d', title: 'Full drum pattern enters', desc: 'The beat finally drops in. Energy lifts immediately. This is the "first drop" for drum/bass in many DnB tracks.' },
+      { icon: '🔊', color: '#ff9d4d', title: 'Bass enters', desc: 'Mid-bass and/or sub bass introduced. The foundation is now fully established.' },
+      { icon: '⬆️', color: '#ffd700', title: 'Tension elements', desc: 'Rising synths, open filters, increasing density. The music "winds up" toward the drop.' },
+      { icon: '🎵', color: '#00ffaa', title: 'Melody hints', desc: 'Fragment of the main melody may appear here — a preview that creates anticipation for the full statement.' },
+    ]
+  },
+  { name: 'DROP 1', bars: '16–32', color: '#2a1a1a', textColor: '#ff4d6d',
+    title: 'Drop 1 (16–32 bars)',
+    elements: [
+      { icon: '💥', color: '#ff4d6d', title: 'Full energy release', desc: 'Everything hits at once: full drums, full bass, lead melody. The dopamine payoff from the build.' },
+      { icon: '🎵', color: '#ffd700', title: 'Main melody', desc: 'The melodic hook plays in full. This is the emotional core of the track.' },
+      { icon: '🔄', color: '#4dcfff', title: 'Repetition with variation', desc: '2–4 bar loop that repeats but subtle changes keep it fresh (filter automation, velocity variation, counter melody).' },
+      { icon: '⚡', color: '#00ffaa', title: 'Keep it moving', desc: 'Automate parameters to keep the drop evolving. A static drop loses energy. Try automating filter cutoff, reverb send, or adding a new percussion element every 8 bars.' },
+    ]
+  },
+  { name: 'BREAK', bars: '8–16', color: '#1a1a2a', textColor: '#b070ff',
+    title: 'Breakdown (8–16 bars)',
+    elements: [
+      { icon: '🌊', color: '#b070ff', title: 'Reduction', desc: 'Bass is removed or reduced. Drums stripped back to minimal or removed entirely. Creates contrast with the drop.' },
+      { icon: '🎵', color: '#4dcfff', title: 'Melodic development', desc: 'The melody is often re-harmonized or transformed here. A more intimate, emotional version of the theme.' },
+      { icon: '🧘', color: '#00ffaa', title: 'Emotional breathing room', desc: 'The listener recovers and re-engages. Without this contrast, the second drop would feel no different from the first.' },
+      { icon: '🎯', color: '#ffd700', title: 'Set up the second drop', desc: 'End with tension: a rising riser, a held note, a filter opening up. The second drop must hit harder than the first.' },
+    ]
+  },
+  { name: 'DROP 2', bars: '16–32', color: '#2a1215', textColor: '#ff9d4d',
+    title: 'Drop 2 (16–32 bars)',
+    elements: [
+      { icon: '🚀', color: '#ff9d4d', title: 'Bigger than Drop 1', desc: 'Add a new layer not present in Drop 1: an extra percussion element, a counter-melody, a thicker bass sound, or more reverb.' },
+      { icon: '🔄', color: '#ff4d6d', title: 'Variation on the theme', desc: 'The same core loop as Drop 1 but elevated. GRiZ often adds a live element (sax, guitar) in the second drop.' },
+      { icon: '⚡', color: '#ffd700', title: 'Automation peak', desc: 'This is where your most dramatic automation lives. Filter sweeps, modulation, breakdown of structure near the end.' },
+      { icon: '📉', color: '#b070ff', title: 'Energy management', desc: 'Toward the end of Drop 2, start reducing elements to transition toward the outro gracefully.' },
+    ]
+  },
+  { name: 'OUTRO', bars: '8–16', color: '#1a2a1a', textColor: '#00ffaa',
+    title: 'Outro (8–16 bars)',
+    elements: [
+      { icon: '📉', color: '#00ffaa', title: 'Element removal', desc: 'Gradually remove drums, then bass, then melody. Reverse of the intro.' },
+      { icon: '🌊', color: '#4dcfff', title: 'Atmosphere returns', desc: 'The track ends where it began — atmosphere and pads, giving the listener emotional closure.' },
+      { icon: '🎚', color: '#b070ff', title: 'Filter/volume fade', desc: 'Long fade-outs with closing filters and reverb tails. Many DJs need 16–32 bars to mix out.' },
+    ]
+  },
+];
+
+const timeline = document.getElementById('structureTimeline');
+const detail = document.getElementById('structureDetail');
+
+structureSections.forEach((sec, i) => {
+  const block = document.createElement('div');
+  block.className = 'section-block';
+  block.style.background = sec.color;
+  block.innerHTML = `<div class="s-name" style="color:${sec.textColor}">${sec.name}</div><div class="s-bars"><span>${sec.bars}</span><br>bars</div>`;
+  block.onclick = () => {
+    document.querySelectorAll('.section-block').forEach(b => b.classList.remove('active-block'));
+    block.classList.add('active-block');
+    renderStructureDetail(sec);
+  };
+  timeline.appendChild(block);
+});
+
+function renderStructureDetail(sec) {
+  detail.innerHTML = `<h3>${sec.title}</h3><ul class="element-list">${sec.elements.map(e => `<li><div class="el-icon" style="background:${e.color}22;color:${e.color}">${e.icon}</div><div class="el-text"><strong>${e.title}</strong><span>${e.desc}</span></div></li>`).join('')}</ul>`;
+}
+
+renderStructureDetail(structureSections[0]);
+
+// init grid viz
+const gv = document.getElementById('gridViz');
+if (gv) {
+  const labels = ['1','e','+','a','2','e','+','a','3','e','+','a','4','e','+','a'];
+  const downs = [0,4,8,12];
+  let html = '';
+  labels.forEach((l,i) => {
+    const isDown = downs.includes(i);
+    const color = isDown ? 'var(--kick)' : 'var(--muted)';
+    const bg = isDown ? 'rgba(255,77,109,0.15)' : 'var(--panel2)';
+    html += `<div style="grid-column:${i+1};background:${bg};border:1px solid var(--border);border-radius:3px;padding:8px 0;text-align:center;font-family:'Space Mono',monospace;font-size:11px;color:${color}">${l}</div>`;
+  });
+  gv.style.display = 'contents';
+  gv.innerHTML = html;
+}
+</script>
+</body>
+</html>
