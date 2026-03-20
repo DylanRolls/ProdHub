@@ -1938,85 +1938,120 @@ bassNotes.forEach(n => {
   bviz.appendChild(el);
 });
 
-// ======= SCALES =======
-const scales = [
-  {
-    name: 'A Minor', color: '#ff4d6d',
-    notes: ['A','B','C','D','E','F','G'],
-    degrees: ['1 Root','2 Tension','3 Minor 3rd','4 Fourth','5 Fifth','6 Sixth','7 Seventh'],
-    colors: ['#ff4d6d','#ff9d4d','#ffd700','#00ffaa','#4dcfff','#b070ff','#ff70aa'],
-    info: 'The most popular key in DnB and jungle. Dark, emotional, and powerful. Clozee, Chase & Status, and most neurofunk is in or around A minor. The minor 3rd (C) gives it darkness. The fifth (E) gives it power. Perfect for bass-heavy music.'
-  },
-  {
-    name: 'D Minor', color: '#ff9d4d',
-    notes: ['D','E','F','G','A','Bb','C'],
-    degrees: ['1 Root','2','b3 Minor 3rd','4','5 Fifth','b6','b7'],
-    colors: ['#ff9d4d','#ffd700','#00ffaa','#4dcfff','#b070ff','#ff70aa','#ff4d6d'],
-    info: 'Slightly warmer than A minor. Used heavily in electrofunk and neo-soul-influenced electronic music. GRiZ often works in D minor or D major. The Bb (flat 6) adds a soulful, almost blues quality.'
-  },
-  {
-    name: 'A Phrygian', color: '#b070ff',
-    notes: ['A','Bb','C','D','E','F','G'],
-    degrees: ['1 Root','b2 DARK','b3','4','5','b6','b7'],
-    colors: ['#b070ff','#ff4d6d','#ffd700','#00ffaa','#4dcfff','#ff70aa','#ff9d4d'],
-    info: 'The "Spanish/cinematic" mode. The flat 2nd (Bb) creates extreme tension and darkness. Common in neurofunk and horror-adjacent DnB. Electric Mantis uses Phrygian-influenced sounds for that eerie, psychedelic quality. The Bb resolving to A is extremely powerful.'
-  },
-  {
-    name: 'A Minor Pentatonic', color: '#00ffaa',
-    notes: ['A','C','D','E','G','—','—'],
-    degrees: ['1 Root','b3','4','5','b7','—','—'],
-    colors: ['#00ffaa','#ffd700','#4dcfff','#ff4d6d','#b070ff','#333','#333'],
-    info: 'The 5-note scale. ZERO bad notes — every note works with every other note. This is where beginners should start ALL melodies. Can\'t go wrong. The blues scale adds a flat 5 (Eb) to this scale for that funky blues tension. Perfect for Sunsquabi / electrofunk melody writing.'
-  },
-  {
-    name: 'A Minor Blues', color: '#4dcfff',
-    notes: ['A','C','D','Eb','E','G','—'],
-    degrees: ['1','b3','4','b5 BLUE','5','b7','—'],
-    colors: ['#4dcfff','#ffd700','#00ffaa','#ff4d6d','#ff9d4d','#b070ff','#333'],
-    info: 'Add the "blue note" (flat 5, Eb) to the pentatonic. This Eb creates that classic blues tension that electrofunk and funk-influenced electronic music thrives on. GRiZ\'s sax lines use this scale constantly. The Eb to E movement (blue note to perfect fifth) is one of the most satisfying resolutions in music.'
-  },
-];
+// ======= SCALES — Full Circle of Fifths =======
 
+const SCALE_TYPES = {
+  'Minor':       { intervals:[0,2,3,5,7,8,10], degrees:['1 Root','2','b3','4','5','b6','b7'],      label:'Natural Minor',     color:'#ff4d6d', info:'Dark and powerful. The backbone of DnB, jungle, and most EDM. The b3 (minor third) is the defining dark interval.' },
+  'Major':       { intervals:[0,2,4,5,7,9,11], degrees:['1 Root','2','3','4','5','6','7'],          label:'Major',             color:'#ffd700', info:'Bright and uplifting. Used in euphoric DnB and festival electrofunk. GRiZ switches to major for his most crowd-pleasing moments.' },
+  'Phrygian':    { intervals:[0,1,3,5,7,8,10], degrees:['1 Root','b2 DARK','b3','4','5','b6','b7'], label:'Phrygian',          color:'#b070ff', info:'The darkest mode. The b2 (one semitone above root) creates extreme tension and a cinematic, almost Middle-Eastern feel. Electric Mantis and neurofunk artists use this for eerie psychedelic textures.' },
+  'Minor Pent':  { intervals:[0,3,5,7,10],      degrees:['1 Root','b3','4','5','b7'],               label:'Minor Pentatonic',  color:'#00ffaa', info:'Five notes, zero bad combinations. Every note works with every other. Start ALL your melodies here — you literally cannot play a wrong note. Perfect for funk-influenced improvisation.' },
+  'Minor Blues': { intervals:[0,3,5,6,7,10],    degrees:['1 Root','b3','4','b5 BLUE','5','b7'],     label:'Minor Blues',       color:'#4dcfff', info:'The pentatonic plus the blue note (b5). That one extra note creates the defining tension of blues, funk, and jazz. GRiZ\'s sax lines and Sunsquabi\'s leads live entirely in this scale.' },
+};
+
+const CHROMA_DISPLAY = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const ROOTS_ORDER = ['C','G','D','A','E','B','Gb','Db','Ab','Eb','Bb','F'];
+const ROOT_SEMI = { C:0,'C#':1,Db:1,D:2,'D#':3,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,'G#':8,Ab:8,A:9,'A#':10,Bb:10,B:11 };
+const NOTE_COLORS = ['#ff4d6d','#ff9d4d','#ffd700','#00ffaa','#4dcfff','#b070ff','#ff70aa'];
+
+function noteNameAt(rootSemi, interval) {
+  return CHROMA_DISPLAY[(rootSemi + interval) % 12];
+}
+
+function buildScalesData() {
+  const out = [];
+  ROOTS_ORDER.forEach(root => {
+    Object.keys(SCALE_TYPES).forEach(typeKey => {
+      const t = SCALE_TYPES[typeKey];
+      const rs = ROOT_SEMI[root];
+      const notes = t.intervals.map(iv => noteNameAt(rs, iv));
+      const degCopy = [...t.degrees];
+      while (notes.length < 7) notes.push('\u2014');
+      while (degCopy.length < 7) degCopy.push('\u2014');
+      out.push({ name:`${root} ${t.label}`, root, typeKey, color:t.color, notes, degrees:degCopy, colors:[...NOTE_COLORS], info:`${root} ${t.label}: `+t.info, intervals:t.intervals, rootSemi:rs });
+    });
+  });
+  return out;
+}
+const ALL_SCALES = buildScalesData();
+
+const FULL_NOTE_FREQ = {};
+['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'].forEach((n,i) => {
+  FULL_NOTE_FREQ[n+'3'] = 130.81 * Math.pow(2, i/12);
+  FULL_NOTE_FREQ[n+'4'] = 261.63 * Math.pow(2, i/12);
+  FULL_NOTE_FREQ[n+'5'] = 523.25 * Math.pow(2, i/12);
+});
+
+let activeRoot = 'A';
+let activeType = 'Minor';
 const scalePills = document.getElementById('scalePills');
 let selectedScale = null;
 
-scales.forEach(scale => {
-  const pill = document.createElement('div');
-  pill.className = 'pill';
-  pill.textContent = scale.name;
-  pill.style.color = scale.color;
-  pill.style.borderColor = scale.color + '55';
-  pill.style.background = scale.color + '11';
-  pill.onclick = () => {
-    selectedScale = scale;
-    renderScale(scale);
-    scalePills.querySelectorAll('.pill').forEach(p => p.style.fontWeight = '400');
-    pill.style.fontWeight = '700';
-    pill.style.background = scale.color + '22';
-  };
-  scalePills.appendChild(pill);
-});
+function buildScalePillUI() {
+  if (!scalePills) return;
+  scalePills.innerHTML = '';
+  const rootRow = document.createElement('div');
+  rootRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;';
+  ROOTS_ORDER.forEach(root => {
+    const p = document.createElement('div');
+    p.className = 'pill';
+    p.textContent = root;
+    const isA = root === activeRoot;
+    p.style.cssText = `color:#e8e8f0;border-color:${isA?'#aaa':'#4a4a5a'};background:${isA?'rgba(255,255,255,0.14)':'rgba(255,255,255,0.04)'};font-weight:${isA?'700':'400'};`;
+    p.onclick = () => { activeRoot = root; buildScalePillUI(); updateScaleDisplay(); };
+    rootRow.appendChild(p);
+  });
+  const typeRow = document.createElement('div');
+  typeRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:5px;';
+  Object.keys(SCALE_TYPES).forEach(typeKey => {
+    const t = SCALE_TYPES[typeKey];
+    const isA = typeKey === activeType;
+    const p = document.createElement('div');
+    p.className = 'pill';
+    p.textContent = t.label;
+    p.style.cssText = `color:${t.color};border-color:${t.color}${isA?'aa':'44'};background:${t.color}${isA?'22':'0a'};font-weight:${isA?'700':'400'};`;
+    p.onclick = () => { activeType = typeKey; buildScalePillUI(); updateScaleDisplay(); };
+    typeRow.appendChild(p);
+  });
+  scalePills.appendChild(rootRow);
+  scalePills.appendChild(typeRow);
+}
+
+function getActiveScale() {
+  return ALL_SCALES.find(s => s.root === activeRoot && s.typeKey === activeType) || ALL_SCALES[0];
+}
+
+function updateScaleDisplay() {
+  const scale = getActiveScale();
+  selectedScale = scale;
+  renderScale(scale);
+  buildPianoRoll();
+}
 
 function renderScale(scale) {
   const disp = document.getElementById('scaleDisplay');
   const explain = document.getElementById('scaleExplain');
+  if (!disp) return;
   disp.innerHTML = '';
   const row = document.createElement('div');
   row.className = 'scale-visual';
   scale.notes.forEach((note, i) => {
-    if (note === '—') return;
+    if (note === '\u2014') return;
     const el = document.createElement('div');
     el.className = 'note-block';
     el.style.background = scale.colors[i] + '22';
     el.style.color = scale.colors[i];
     el.style.border = `2px solid ${scale.colors[i]}44`;
     el.innerHTML = `<div>${note}</div><div style="font-size:8px;opacity:0.7;margin-top:4px">${scale.degrees[i].split(' ')[0]}</div>`;
+    el.onclick = () => {
+      const freq = FULL_NOTE_FREQ[note+'4'] || FULL_NOTE_FREQ[note+'5'];
+      if (freq) playMelNote(freq, getCtx().currentTime+0.02, 0.6, 'sine', 0.28);
+    };
     row.appendChild(el);
   });
   disp.appendChild(row);
-  explain.innerHTML = scale.info;
-  explain.style.display = 'block';
+  if (explain) { explain.textContent = scale.info; explain.style.display = 'block'; }
 }
+
 
 // ======= STRUCTURE =======
 const structureSections = [
@@ -2114,12 +2149,10 @@ if (gv) {
 }
 
 // ======= MELODY AUDIO ENGINE =======
-// Note frequencies for A minor scale across octaves
-const NOTE_FREQ = {
-  'A3':220.00,'B3':246.94,'C4':261.63,'D4':293.66,'E4':329.63,'F4':349.23,'G4':392.00,
-  'A4':440.00,'B4':493.88,'C5':523.25,'D5':587.33,'E5':659.25,'F5':698.46,'G5':783.99,
-  'A5':880.00
-};
+
+// NOTE_FREQ is now provided by FULL_NOTE_FREQ from the scales section above
+// Alias for backward compat used by law/motif players
+const NOTE_FREQ = FULL_NOTE_FREQ;
 
 function playMelNote(freq, startTime, duration, type='sine', vol=0.3) {
   const ctx = getCtx();
@@ -2128,64 +2161,119 @@ function playMelNote(freq, startTime, duration, type='sine', vol=0.3) {
   const gain = ctx.createGain();
   const filter = ctx.createBiquadFilter();
   filter.type = 'lowpass';
-  filter.frequency.value = freq * 4;
+  filter.frequency.value = Math.min(freq * 4, 18000);
   osc.type = type;
   osc.frequency.value = freq;
   gain.gain.setValueAtTime(0, startTime);
   gain.gain.linearRampToValueAtTime(vol, startTime + 0.01);
   gain.gain.setValueAtTime(vol, startTime + duration - 0.05);
   gain.gain.linearRampToValueAtTime(0, startTime + duration);
-  osc.connect(filter);
-  filter.connect(gain);
-  gain.connect(out);
-  osc.start(startTime);
-  osc.stop(startTime + duration + 0.05);
+  osc.connect(filter); filter.connect(gain); gain.connect(out);
+  osc.start(startTime); osc.stop(startTime + duration + 0.05);
 }
 
-// Piano roll note definitions: [noteName, startStep(0-31), lengthInSteps, type, info]
-// 2 bars = 32 steps of 16th notes
-const PR_ROWS = [
-  { note:'A5', label:'A5', keyClass:'chord' },
-  { note:'G5', label:'G5', keyClass:'tension' },
-  { note:'E5', label:'E5', keyClass:'chord' },
-  { note:'D5', label:'D5', keyClass:'tension' },
-  { note:'C5', label:'C5', keyClass:'chord' },
-  { note:'B4', label:'B4', keyClass:'tension' },
-  { note:'A4', label:'A4', keyClass:'root' },
-  { note:'G4', label:'G4', keyClass:'tension' },
-  { note:'E4', label:'E4', keyClass:'chord' },
-];
+// ---- Piano Roll: dynamically generated from active scale ----
+// The roll always shows a 2-octave chromatic range centred on root+4th octave
+// degree roles: 'root','chord','tension','neutral','out' (not in scale)
 
-// Main melody notes: [row index (0=top), start step, length steps]
-const MAIN_NOTES = [
-  { row:6, start:0,  len:4,  label:'A4 — Root, home base', info:'Starting on the root (A) establishes the key immediately. The listener\'s brain locks in: this is home.', vol:0.3 },
-  { row:4, start:4,  len:2,  label:'C5 — Minor 3rd', info:'Stepping up to the minor 3rd (C) adds the characteristic darkness of A minor. This interval is the emotional signature of the key.', vol:0.3 },
-  { row:2, start:6,  len:3,  label:'E5 — Fifth, peak', info:'Leaping to the fifth (E) is the melodic peak of this phrase. The highest note happens once — this is the emotional climax.', vol:0.32 },
-  { row:3, start:9,  len:2,  label:'D5 — Fourth, tension', info:'Stepping down to D creates gentle tension — the fourth pulls toward the third and root. The melody begins its resolution journey.', vol:0.28 },
-  { row:4, start:11, len:2,  label:'C5 — Minor 3rd', info:'Returning to C before the final resolution. The melody echoes its earlier motif — repetition creates recognition.', vol:0.28 },
-  { row:6, start:13, len:3,  label:'A4 — Root, resolution', info:'Back to the root. The phrase resolves. The brain gets its dopamine hit of completion. This is why melodies that end on the root feel "finished."', vol:0.3 },
+function getPRRows() {
+  const scale = getActiveScale();
+  const rs = scale.rootSemi;
+  const intervals = scale.intervals;
+  // Build 12 semitones above root (octave 4) + 2 below (octave 4-1 = lower oct)
+  // Show notes from root+octave+7 semitones down to root-2 semitones (chromatic, filtered)
+  // We'll show 9 rows: root4, +2sem, +3sem (or next scale note), ... up to root5+2
+  // Actually build a clean diatonic roll: show all scale notes + chromatic neighbours
+  const rows = [];
+  // 2 octaves chromatic descending from root5 down to below root4
+  const topSemi = rs + 12 + 3; // a few above root5
+  for (let semi = topSemi; semi >= rs - 2; semi--) {
+    const noteName = CHROMA_DISPLAY[(semi + 1200) % 12];
+    const octave = Math.floor(semi / 12) + 4 - Math.floor(rs / 12);
+    const relSemi = ((semi - rs) % 12 + 12) % 12;
+    const inScale = intervals.includes(relSemi);
+    const degIdx = intervals.indexOf(relSemi);
+    let keyClass = 'out';
+    let degLabel = '';
+    if (inScale) {
+      const deg = scale.degrees[degIdx] || '';
+      degLabel = deg.split(' ')[0];
+      if (relSemi === 0) keyClass = 'root';
+      else if ([4,7,3].includes(relSemi) || (intervals.length<=6 && [3,7].includes(relSemi))) keyClass = 'chord';
+      else if ([1,2,6,8,9,10,11].includes(relSemi)) keyClass = 'tension';
+      else keyClass = 'neutral';
+    }
+    // Only include in-scale notes (plus one non-scale row for visual spacing if chromatic)
+    if (inScale) {
+      rows.push({ note: noteName + octave, noteName, octave, keyClass, degLabel, semi });
+    }
+  }
+  // Limit to top 9 rows for display clarity
+  const out = rows.slice(0, Math.min(rows.length, 11));
+  return out;
+}
+
+// Melody shape is always expressed as scale-degree relative positions
+// so it transposes correctly to any key.
+// Format: { degIndex(0=root,1=2nd...), octOffset(0=mid,1=high,-1=low), start, len, label, info, vol }
+// degIndex indexes into scale.intervals array
+
+const MEL_PATTERN_MAIN = [
+  { di:0, oc:0, start:0,  len:4,  label:'Root — home base',    info:'Starting on the root establishes the key. The listener locks in immediately: this is home.', vol:0.3 },
+  { di:2, oc:0, start:4,  len:2,  label:'3rd — character note',info:'Stepping to the 3rd gives the scale its emotional character. In minor it adds darkness; in major it adds brightness.', vol:0.3 },
+  { di:4, oc:0, start:6,  len:3,  label:'5th — peak, power',   info:'Leaping to the 5th is the melodic peak. The highest note happens once — this is the emotional climax.', vol:0.32 },
+  { di:3, oc:0, start:9,  len:2,  label:'4th — gentle tension',info:'Stepping down to the 4th creates gentle tension — it pulls toward the 3rd and root. The resolution journey begins.', vol:0.28 },
+  { di:2, oc:0, start:11, len:2,  label:'3rd — motif echo',    info:'Returning to the 3rd before final resolution. The melody echoes its earlier motif — repetition creates recognition.', vol:0.28 },
+  { di:0, oc:0, start:13, len:3,  label:'Root — resolution',   info:'Back to the root. The phrase resolves. Melodies that end on the root feel finished and satisfying.', vol:0.3 },
   // Bar 2
-  { row:6, start:16, len:2,  label:'A4 — Motif repeat', info:'The phrase starts again — repetition makes the motif memorable. A hook is just a motif you\'ve heard enough times to anticipate.', vol:0.28 },
-  { row:4, start:18, len:1,  label:'C5 — Quick step up', info:'Shorter note this time — varied rhythm on the same motif creates forward energy. Same notes, new feel.', vol:0.28 },
-  { row:2, start:19, len:1,  label:'E5 — Quick peak', info:'Faster version of the climb. The brain recognizes the shape of the phrase even though the rhythm changed.', vol:0.3 },
-  { row:1, start:20, len:2,  label:'G5 — Tension, 7th', info:'Climbing to the 7th (G) for the first time — maximum tension. G wants desperately to resolve down to A. This is the phrase\'s emotional peak.', vol:0.32 },
-  { row:2, start:22, len:2,  label:'E5 — Step down', info:'Stepping back down. The tension releases gradually rather than all at once — more satisfying than an immediate jump.', vol:0.28 },
-  { row:6, start:24, len:8,  label:'A4 — Long resolution', info:'A long held root note closes the 2-bar phrase. The 4-beat hold gives the ear maximum satisfaction. Silence after this is golden.', vol:0.3 },
+  { di:0, oc:0, start:16, len:2,  label:'Root — motif repeat', info:'The phrase begins again — repetition makes a motif memorable. A hook is just a motif you have heard enough times to anticipate.', vol:0.28 },
+  { di:2, oc:0, start:18, len:1,  label:'3rd — quick step',    info:'Shorter note this time — varied rhythm on the same motif creates forward energy. Same notes, new feel.', vol:0.28 },
+  { di:4, oc:0, start:19, len:1,  label:'5th — quick peak',    info:'Faster version of the climb. The brain recognizes the melodic shape even though the rhythm changed.', vol:0.3 },
+  { di:6, oc:0, start:20, len:2,  label:'7th — max tension',   info:'Climbing to the 7th for the first time — maximum tension. It desperately wants to resolve. This is the phrase\'s emotional peak.', vol:0.32 },
+  { di:4, oc:0, start:22, len:2,  label:'5th — step down',     info:'Stepping back down. Tension releases gradually rather than all at once — more satisfying than an immediate jump.', vol:0.28 },
+  { di:0, oc:0, start:24, len:8,  label:'Root — long hold',    info:'A long held root note closes the phrase. The extended hold gives the ear maximum satisfaction.', vol:0.3 },
 ];
 
-const COUNTER_NOTES = [
-  { row:0, start:4,  len:2,  label:'A5 — High counter entry', info:'Counter-melody enters in the silence of bar 1. It\'s an octave above the main melody — different register, never competing.', vol:0.22, cls:'counter' },
-  { row:8, start:7,  len:2,  label:'E4 — Low answer', info:'Moving in the OPPOSITE direction to the main melody (which is going up). This contrary motion creates the woven, interlocking texture.', vol:0.22, cls:'counter' },
-  { row:7, start:13, len:1,  label:'G4 — Tension fill', info:'Short counter hit fills a gap in the main melody. One note, placed precisely in the silence — this is counter-melody law #1 in action.', vol:0.2,  cls:'counter' },
-  // Bar 2 counter
-  { row:0, start:17, len:1,  label:'A5 — Quick counter stab', info:'Short, syncopated. The counter uses 16th notes while the main melody is on longer notes. Different rhythm = Law #3.', vol:0.2,  cls:'counter2' },
-  { row:8, start:18, len:2,  label:'E4 — Low counter line', info:'Descending while main melody ascends — contrary motion again. Two voices braiding together.', vol:0.22, cls:'counter' },
-  { row:7, start:20, len:1,  label:'G4 — Harmony on the 7th', info:'Playing G while the main melody is also on G5 — these notes are in the same harmony, one octave apart. Brief moment of unison before parting.', vol:0.2,  cls:'counter2' },
-  { row:8, start:22, len:2,  label:'E4 — Fills the space', info:'As the main melody steps down, the counter holds steady — creating a pedal point that adds richness.', vol:0.2,  cls:'counter' },
+const MEL_PATTERN_COUNTER = [
+  { di:0, oc:1, start:4,  len:2,  label:'Root (high) — counter entry', info:'Counter enters in the silence of bar 1. One octave above main — different register, never competing.', vol:0.22, cls:'counter' },
+  { di:4, oc:-1,start:7,  len:2,  label:'5th (low) — opposite direction', info:'Moving DOWN while the main melody was going up. This contrary motion creates the woven, interlocking texture.', vol:0.22, cls:'counter' },
+  { di:6, oc:-1,start:13, len:1,  label:'7th (low) — gap fill',    info:'Short hit filling a gap in the main melody. One note, precisely in the silence — counter-melody Law #1.', vol:0.2,  cls:'counter' },
+  { di:0, oc:1, start:17, len:1,  label:'Root (high) — stab',      info:'Short, syncopated stab while main has a long note. Counter uses 16th notes = Law #3: different rhythm.', vol:0.2,  cls:'counter2' },
+  { di:4, oc:-1,start:18, len:2,  label:'5th (low) — descend',     info:'Descending while main ascends — contrary motion. Two voices braiding together.', vol:0.22, cls:'counter' },
+  { di:6, oc:-1,start:20, len:1,  label:'7th (low) — harmony',     info:'Same scale degree as main but an octave lower. Brief harmonic moment before parting again.', vol:0.2,  cls:'counter2' },
+  { di:4, oc:-1,start:22, len:2,  label:'5th (low) — pedal hold',  info:'Counter holds steady as main steps down — a pedal point adding harmonic richness.', vol:0.2,  cls:'counter' },
 ];
+
+// Convert degree-index pattern to actual rows/freqs based on current scale
+function resolvePattern(pattern) {
+  const scale = getActiveScale();
+  const rs = scale.rootSemi;
+  const rows = getPRRows();
+  const resolved = [];
+  pattern.forEach(p => {
+    const degIdx = Math.min(p.di, scale.intervals.length - 1);
+    const semitone = scale.intervals[degIdx];
+    const octBase = 4 + p.oc; // middle octave = 4
+    // Find matching row
+    const rowIdx = rows.findIndex(r => {
+      const rOct = r.octave;
+      const rSemi = ROOT_SEMI[r.noteName] !== undefined ? ROOT_SEMI[r.noteName] : (CHROMA_DISPLAY.indexOf(r.noteName));
+      const expectedSemi = (rs + semitone) % 12;
+      return rSemi === expectedSemi && (p.oc === 0 ? (rOct === octBase || rOct === octBase-1) : rOct === octBase);
+    });
+    const noteName = CHROMA_DISPLAY[(rs + semitone) % 12];
+    const freq = FULL_NOTE_FREQ[noteName + octBase] || FULL_NOTE_FREQ[noteName + (octBase-1)] || FULL_NOTE_FREQ[noteName + (octBase+1)];
+    const degLabel = scale.degrees[degIdx] ? scale.degrees[degIdx].split(' ').slice(1).join(' ') : '';
+    resolved.push({ ...p, rowIdx: rowIdx >= 0 ? rowIdx : 0, freq, noteName, octBase, degLabel });
+  });
+  return resolved;
+}
 
 let melodyTimer = null;
 let melodyNotes = [];
+let melodyLooping = false;
+let melodyLoopWhich = null;
+let melodyLoopTimeout = null;
 
 function buildPianoRoll() {
   const body = document.getElementById('prBody');
@@ -2194,9 +2282,12 @@ function buildPianoRoll() {
   body.innerHTML = '';
   beatNums.innerHTML = '';
 
+  const rows = getPRRows();
+  const scale = getActiveScale();
+
   // Beat numbers header
   const keyPad = document.createElement('div');
-  keyPad.style.cssText = 'width:52px;flex-shrink:0;border-right:1px solid var(--border);';
+  keyPad.style.cssText = 'width:72px;flex-shrink:0;border-right:1px solid var(--border);';
   beatNums.appendChild(keyPad);
   for (let i = 0; i < 32; i++) {
     const n = document.createElement('div');
@@ -2205,50 +2296,71 @@ function buildPianoRoll() {
     beatNums.appendChild(n);
   }
 
-  PR_ROWS.forEach((rowDef, ri) => {
+  const mainResolved = resolvePattern(MEL_PATTERN_MAIN);
+  const counterResolved = resolvePattern(MEL_PATTERN_COUNTER);
+
+  // Build degree tension map for colour coding rows
+  const degreeRole = (keyClass) => {
+    if (keyClass === 'root') return '#ff4d6d';
+    if (keyClass === 'chord') return '#00ffaa';
+    if (keyClass === 'tension') return '#ffd700';
+    return '#6b6b80';
+  };
+
+  rows.forEach((rowDef, ri) => {
     const row = document.createElement('div');
     row.className = 'pr-row';
-    row.style.cssText = `height:32px;`;
+    row.style.cssText = `height:32px;${rowDef.keyClass === 'root' ? 'background:rgba(255,77,109,0.04);' : ''}`;
 
+    // Key label — shows note name + degree label + tension indicator
     const key = document.createElement('div');
     key.className = `pr-key ${rowDef.keyClass}`;
-    key.textContent = rowDef.label;
+    key.style.cssText = `width:72px;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;padding-right:8px;border-right:1px solid var(--border);height:100%;`;
+    const roleColor = degreeRole(rowDef.keyClass);
+    key.innerHTML = `<span style="font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:${roleColor};">${rowDef.noteName}</span>`
+      + (rowDef.degLabel ? `<span style="font-family:'Space Mono',monospace;font-size:7px;color:${roleColor};opacity:0.7;">${rowDef.degLabel}</span>` : '');
     row.appendChild(key);
 
     const lane = document.createElement('div');
     lane.className = 'pr-lane';
     lane.style.cssText = 'flex:1;position:relative;height:100%;';
 
-    // Grid cells
+    // Row background tint for degree role
+    if (rowDef.keyClass === 'root') lane.style.background = 'rgba(255,77,109,0.03)';
+    else if (rowDef.keyClass === 'tension') lane.style.background = 'rgba(255,215,0,0.02)';
+
+    // Grid cells with beat markers
     const gridDiv = document.createElement('div');
     gridDiv.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;display:flex;';
     for (let c = 0; c < 32; c++) {
       const cell = document.createElement('div');
-      cell.style.cssText = `flex:1;border-right:1px solid ${c%4===0 ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)'};`;
-      if (c % 16 === 0) cell.style.borderRight = '1px solid rgba(255,255,255,0.15)';
+      let bc = c % 16 === 0 ? 'rgba(255,255,255,0.14)' : c % 4 === 0 ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.02)';
+      cell.style.cssText = `flex:1;border-right:1px solid ${bc};`;
       gridDiv.appendChild(cell);
     }
     lane.appendChild(gridDiv);
 
-    // Place main melody notes for this row
-    MAIN_NOTES.filter(n => n.row === ri).forEach(n => {
+    // Place main notes
+    mainResolved.filter(n => n.rowIdx === ri).forEach(n => {
       const noteEl = document.createElement('div');
       noteEl.className = 'pr-note main';
-      noteEl.id = `mnote-${n.row}-${n.start}`;
+      noteEl.id = `mnote-${ri}-${n.start}`;
       noteEl.style.cssText = `left:${(n.start/32)*100}%;width:calc(${(n.len/32)*100}% - 2px);`;
-      noteEl.textContent = PR_ROWS[n.row].label;
+      const degText = n.degLabel ? `${n.noteName} (${n.degLabel})` : n.noteName;
+      noteEl.textContent = n.len >= 3 ? degText : n.len >= 2 ? n.noteName : '';
       noteEl.title = n.label;
       noteEl.onclick = () => showNoteExplain(n.label, n.info, '#00ffaa');
       lane.appendChild(noteEl);
     });
 
-    // Place counter notes for this row
-    COUNTER_NOTES.filter(n => n.row === ri).forEach(n => {
+    // Place counter notes
+    counterResolved.filter(n => n.rowIdx === ri).forEach(n => {
       const noteEl = document.createElement('div');
       noteEl.className = `pr-note ${n.cls || 'counter'}`;
-      noteEl.id = `cnote-${n.row}-${n.start}`;
+      noteEl.id = `cnote-${ri}-${n.start}`;
       noteEl.style.cssText = `left:${(n.start/32)*100}%;width:calc(${(n.len/32)*100}% - 2px);`;
-      noteEl.textContent = n.len > 1 ? PR_ROWS[n.row].label : '';
+      const degText = n.degLabel ? `${n.noteName} (${n.degLabel})` : n.noteName;
+      noteEl.textContent = n.len >= 3 ? degText : n.len >= 2 ? n.noteName : '';
       noteEl.title = n.label;
       noteEl.onclick = () => showNoteExplain(n.label, n.info, n.cls === 'counter2' ? '#ffd700' : '#ff4d6d');
       lane.appendChild(noteEl);
@@ -2258,79 +2370,124 @@ function buildPianoRoll() {
     body.appendChild(row);
   });
   body.style.display = 'grid';
-  body.style.gridTemplateRows = `repeat(${PR_ROWS.length}, 32px)`;
+  body.style.gridTemplateRows = `repeat(${rows.length}, 32px)`;
 }
 
-function showNoteExplain(title, body, color) {
+function showNoteExplain(title, bodyTxt, color) {
   const el = document.getElementById('noteExplain');
+  if (!el) return;
   document.getElementById('noteExplainTitle').textContent = title;
   document.getElementById('noteExplainTitle').style.color = color;
-  document.getElementById('noteExplainBody').textContent = body;
+  document.getElementById('noteExplainBody').textContent = bodyTxt;
   el.style.display = 'block';
 }
 
 function stopMelody() {
+  melodyLooping = false;
+  melodyLoopWhich = null;
+  if (melodyLoopTimeout) { clearTimeout(melodyLoopTimeout); melodyLoopTimeout = null; }
   melodyNotes.forEach(t => clearTimeout(t));
   melodyNotes = [];
+  // Reset button states
+  const btns = document.querySelectorAll('.play-mel');
+  btns.forEach(b => { if (b.dataset.loopBtn) b.classList.remove('stop-col'); });
+}
+
+function playMelodyOnce(which, startOverride) {
+  const ctx = getCtx();
+  const stepDur = (60 / 160) / 4;
+  const now = startOverride !== undefined ? startOverride : (ctx.currentTime + 0.05);
+  const mainRes = resolvePattern(MEL_PATTERN_MAIN);
+  const ctrRes  = resolvePattern(MEL_PATTERN_COUNTER);
+  const toPlay  = which === 'main' ? mainRes : which === 'counter' ? ctrRes : [...mainRes, ...ctrRes];
+  const totalSteps = 32;
+
+  toPlay.forEach(n => {
+    if (!n.freq) return;
+    const t = now + n.start * stepDur;
+    const dur = n.len * stepDur;
+    playMelNote(n.freq, t, dur, 'sine', n.vol || 0.28);
+    const delay = Math.max(0, (t - ctx.currentTime) * 1000);
+    const timer = setTimeout(() => {
+      const el2 = document.getElementById(`mnote-${n.rowIdx}-${n.start}`) || document.getElementById(`cnote-${n.rowIdx}-${n.start}`);
+      if (el2) { el2.classList.add('playing'); setTimeout(() => el2.classList.remove('playing'), 180); }
+    }, delay);
+    melodyNotes.push(timer);
+  });
+  return now + totalSteps * stepDur; // return end time
+}
+
+function scheduleNextLoop(which, endTime) {
+  if (!melodyLooping) return;
+  const ctx = getCtx();
+  const msUntilEnd = Math.max(0, (endTime - ctx.currentTime) * 1000 - 50);
+  melodyLoopTimeout = setTimeout(() => {
+    if (!melodyLooping) return;
+    melodyNotes.forEach(t => clearTimeout(t));
+    melodyNotes = [];
+    const end = playMelodyOnce(which, ctx.currentTime + 0.04);
+    scheduleNextLoop(which, end);
+  }, msUntilEnd);
 }
 
 function playMelody(which) {
   stopMelody();
-  const ctx = getCtx();
-  const stepDur = (60 / 160) / 4; // 16th note at 160bpm
-  const now = ctx.currentTime + 0.05;
-
-  const toPlay = which === 'main' ? MAIN_NOTES : which === 'counter' ? COUNTER_NOTES : [...MAIN_NOTES, ...COUNTER_NOTES];
-
-  toPlay.forEach(n => {
-    const freq = NOTE_FREQ[PR_ROWS[n.row].note];
-    if (!freq) return;
-    const t = now + n.start * stepDur;
-    const dur = n.len * stepDur;
-    playMelNote(freq, t, dur, 'sine', (n.vol || 0.28));
-
-    // Visual flash
-    const delay = Math.max(0, (t - ctx.currentTime) * 1000);
-    const timer = setTimeout(() => {
-      const id = `mnote-${n.row}-${n.start}`;
-      const el2 = document.getElementById(id) || document.getElementById(`cnote-${n.row}-${n.start}`);
-      if (el2) { el2.classList.add('playing'); setTimeout(() => el2.classList.remove('playing'), 200); }
-    }, delay);
-    melodyNotes.push(timer);
-  });
+  melodyLooping = true;
+  melodyLoopWhich = which;
+  const end = playMelodyOnce(which);
+  scheduleNextLoop(which, end);
 }
 
 // ======= TENSION GRID =======
-const TENSION_NOTES_DATA = [
-  { name:'A4', label:'Root (1st)', freq:440, type:'resolve', info:'Home base. Maximum stability. Melodies want to land here. Starting or ending on A feels conclusive.' },
-  { name:'B4', label:'2nd — Tension', freq:493.88, type:'tension', info:'Mild tension. Feels unfinished. Leads toward C or A. Use as a passing note or held for anticipation.' },
-  { name:'C5', label:'Minor 3rd', freq:523.25, type:'resolve', info:'The darkest chord tone. C is what makes A minor sound MINOR rather than major. Stable but emotionally dark.' },
-  { name:'D5', label:'4th', freq:587.33, type:'neutral', info:'Neutral — neither tense nor resolved. The "question mark" note. Works as a pivot between tension and resolution.' },
-  { name:'E5', label:'5th — Power', freq:659.25, type:'resolve', info:'The most powerful note after the root. The root-fifth relationship is the foundation of all bass riffs. Stable, open, strong.' },
-  { name:'F5', label:'6th — Tension', freq:698.46, type:'tension', info:'Medium tension. Somewhat dark and unstable. Leads toward E. Common in jazz-influenced electrofunk lines.' },
-  { name:'G5', label:'7th — Max Tension', freq:783.99, type:'tension', info:'Maximum tension. G desperately wants to resolve up to A. The tension-resolution of G→A is the most powerful move in A minor melody writing.' },
-];
+// TENSION_NOTES_DATA is now generated dynamically from active scale in buildTensionGrid
 
 function buildTensionGrid() {
   const grid = document.getElementById('tensionGrid');
   if (!grid) return;
-  grid.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;';
-  TENSION_NOTES_DATA.forEach(n => {
+  grid.innerHTML = '';
+  grid.style.cssText = 'display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;';
+
+  const scale = getActiveScale();
+  const rs = scale.rootSemi;
+  const ivs = scale.intervals;
+  const degs = scale.degrees;
+
+  // Type: 0=root(resolve), [3,7]=chord tones(resolve), [1,2]=mild, tension notes = rest
+  const typeForSemi = (semi) => {
+    if (semi === 0) return 'root';
+    if ([3,4,7].includes(semi)) return 'resolve';
+    if ([1,6].includes(semi)) return 'tension';
+    if ([2,5].includes(semi)) return 'tension';
+    return 'neutral';
+  };
+  const TYPE_INFO = {
+    root:'Home base. Maximum stability. The most resolved note. Start and end phrases here.',
+    resolve:'A stable chord tone. Resting on this note feels grounded and finished.',
+    tension:'Tension note. Feels unresolved and wants to move. Use to create anticipation and forward pull.',
+    neutral:'Neutral pivot note. Neither tense nor fully resolved — a musical question mark.'
+  };
+
+  ivs.forEach((semi, di) => {
+    const noteName = CHROMA_DISPLAY[(rs + semi) % 12];
+    const freq = FULL_NOTE_FREQ[noteName+'5'] || FULL_NOTE_FREQ[noteName+'4'] || 440;
+    const t = typeForSemi(semi);
+    const color = t==='root' ? '#ff4d6d' : t==='resolve' ? '#00ffaa' : t==='tension' ? '#ff9d4d' : '#ffd700';
+    const degLabel = (degs[di]||'').replace(/^[0-9b#]+\s*/,'');
     const btn = document.createElement('div');
-    const color = n.type === 'resolve' ? '#00ffaa' : n.type === 'tension' ? '#ff4d6d' : '#ffd700';
-    btn.style.cssText = `flex:1;min-width:80px;padding:12px 8px;text-align:center;border-radius:6px;cursor:pointer;background:${color}18;border:2px solid ${color}40;transition:all .15s;`;
-    btn.innerHTML = `<div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:${color};">${n.name}</div><div style="font-size:10px;color:${color};opacity:.8;margin-top:2px;">${n.label}</div>`;
+    btn.style.cssText = `flex:1;min-width:72px;padding:10px 6px;text-align:center;border-radius:6px;cursor:pointer;background:${color}18;border:2px solid ${color}40;transition:all .15s;`;
+    btn.innerHTML = `<div style="font-family:Space Mono,monospace;font-size:15px;font-weight:700;color:${color};">${noteName}</div>
+      <div style="font-size:9px;color:${color};opacity:.85;margin-top:2px;">${degs[di]||''}</div>
+      <div style="font-size:8px;color:${color};opacity:0.6;margin-top:1px;">${t.toUpperCase()}</div>`;
     btn.onclick = () => {
-      playTensionNote(n.freq, n.type);
+      playTensionNote(freq, t);
       btn.style.transform = 'scale(1.08)';
       setTimeout(() => btn.style.transform = '', 200);
-      // Show explanation
       const existing = document.getElementById('tensionExplain');
       if (existing) existing.remove();
       const exp = document.createElement('div');
       exp.id = 'tensionExplain';
       exp.style.cssText = `background:${color}18;border:1px solid ${color}40;border-radius:6px;padding:12px;margin-top:8px;font-size:13px;color:#c0c0d0;`;
-      exp.innerHTML = `<strong style="color:${color};font-family:'Space Mono',monospace;font-size:10px;">${n.name} — ${n.label.toUpperCase()}</strong><br>${n.info}`;
+      exp.innerHTML = `<strong style="color:${color};font-family:Space Mono,monospace;font-size:10px;">${noteName} — ${(degs[di]||'').toUpperCase()}</strong><br>${TYPE_INFO[t]}`;
       grid.parentNode.insertBefore(exp, grid.nextSibling);
     };
     grid.appendChild(btn);
@@ -2345,7 +2502,8 @@ function playTensionNote(freq, type) {
   const droneOsc = ctx.createOscillator();
   const droneGain = ctx.createGain();
   droneOsc.type = 'sine';
-  droneOsc.frequency.value = 110; // A2 drone
+  const droneFreq = FULL_NOTE_FREQ[CHROMA_DISPLAY[getActiveScale().rootSemi]+'3'] || 110;
+  droneOsc.frequency.value = droneFreq; // root drone
   droneGain.gain.setValueAtTime(0.12, now);
   droneGain.gain.linearRampToValueAtTime(0, now + 1.2);
   droneOsc.connect(droneGain); droneGain.connect(out);
@@ -2355,50 +2513,186 @@ function playTensionNote(freq, type) {
   playMelNote(freq, now, 1.0, 'sine', 0.3);
 }
 
-// ======= LAW VISUALIZATIONS =======
-function buildLawViz(id, mainBlocks, counterBlocks) {
-  const el = document.getElementById(id);
+// ======= LAW VISUALIZATIONS — pitch-aware SVG piano rolls =======
+
+// Builds a mini pitch-aware roll SVG for each law
+// notes: array of { step(0-15), len(steps), pitch(0=low..7=high), color, label }
+// totalSteps: 16
+function buildPitchRoll(containerId, notes, totalSteps) {
+  const el = document.getElementById(containerId);
   if (!el) return;
   el.innerHTML = '';
-  el.style.cssText = 'display:flex;gap:3px;';
-  for (let i = 0; i < 16; i++) {
-    const cell = document.createElement('div');
-    const isMain = mainBlocks.includes(i);
-    const isCounter = counterBlocks.includes(i);
-    cell.style.cssText = `flex:1;height:20px;border-radius:2px;background:${isMain ? 'var(--accent)' : isCounter ? 'var(--accent2)' : 'var(--panel)' };border:1px solid ${isMain || isCounter ? 'transparent' : 'var(--border)'};`;
-    el.appendChild(cell);
+
+  const ROWS = 8; // pitch rows shown
+  const HEIGHT = 120;
+  const rowH = HEIGHT / ROWS;
+  const W = 100; // percent width units
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', `0 0 ${totalSteps * 10} ${HEIGHT}`);
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.style.cssText = 'width:100%;height:'+HEIGHT+'px;display:block;border-radius:4px;background:#16161f;';
+
+  // Beat grid lines
+  for (let i = 0; i <= totalSteps; i++) {
+    const x = i * 10;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', x); line.setAttribute('y1', 0);
+    line.setAttribute('x2', x); line.setAttribute('y2', HEIGHT);
+    line.setAttribute('stroke', i % 4 === 0 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.03)');
+    line.setAttribute('stroke-width', i % 4 === 0 ? '1.5' : '0.8');
+    svg.appendChild(line);
   }
+  // Pitch row lines
+  for (let r = 0; r <= ROWS; r++) {
+    const y = r * rowH;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', 0); line.setAttribute('y1', y);
+    line.setAttribute('x2', totalSteps * 10); line.setAttribute('y2', y);
+    line.setAttribute('stroke', 'rgba(255,255,255,0.04)');
+    line.setAttribute('stroke-width', '0.8');
+    svg.appendChild(line);
+  }
+
+  // Note blocks — pitch 7 = top row, pitch 0 = bottom row
+  notes.forEach(n => {
+    const x = n.step * 10 + 1;
+    const w = n.len * 10 - 2;
+    const rowIdx = ROWS - 1 - Math.min(n.pitch, ROWS - 1); // flip: high pitch = top
+    const y = rowIdx * rowH + 2;
+    const h = rowH - 4;
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', x); rect.setAttribute('y', y);
+    rect.setAttribute('width', w); rect.setAttribute('height', h);
+    rect.setAttribute('rx', '2');
+    rect.setAttribute('fill', n.color || '#00ffaa');
+    svg.appendChild(rect);
+
+    // Note label if wide enough
+    if (w > 18) {
+      const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+      txt.setAttribute('x', x + 3);
+      txt.setAttribute('y', y + h * 0.72);
+      txt.setAttribute('font-size', '6');
+      txt.setAttribute('font-family', 'Space Mono, monospace');
+      txt.setAttribute('fill', '#000');
+      txt.setAttribute('font-weight', '700');
+      txt.textContent = n.label || '';
+      svg.appendChild(txt);
+    }
+  });
+
+  // Beat labels
+  for (let i = 0; i < totalSteps; i += 4) {
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x', i * 10 + 2);
+    txt.setAttribute('y', HEIGHT - 2);
+    txt.setAttribute('font-size', '6');
+    txt.setAttribute('font-family', 'Space Mono, monospace');
+    txt.setAttribute('fill', '#ffd700');
+    txt.textContent = (i/4 + 1);
+    svg.appendChild(txt);
+  }
+
+  el.appendChild(svg);
 }
 
-buildLawViz('law1Viz', [0,1,2,3,8,9,10,11], [4,5,12,13,14]);
-buildLawViz('law2Viz', [0,2,4,6,8,10], [1,3,5,7,11,13]);
-buildLawViz('law3Viz', [0,4,8,12], [2,3,5,6,9,10,13,14,15]);
+// Pitch scale reference (semitones above root, mapped to 0-7 display rows)
+// We use a 7-row diatonic mapping: 0=root,1=2nd,2=3rd,3=4th,4=5th,5=6th,6=7th,7=root+octave
+// Law 1: Fill the Silences — main phrase then counter fills gap
+buildPitchRoll('law1Viz', [
+  // Main phrase: root→3rd→5th→root (steps 0-3)
+  { step:0, len:2, pitch:0, color:'#00ffaa', label:'Root' },
+  { step:2, len:1, pitch:2, color:'#00ffaa', label:'3rd' },
+  { step:3, len:1, pitch:4, color:'#00ffaa', label:'5th' },
+  // SILENCE steps 4-5
+  // Counter fills silence: 5th (steps 4-5)
+  { step:4, len:2, pitch:5, color:'#ff4d6d', label:'Counter' },
+  // Main phrase again (steps 6-9)
+  { step:6, len:2, pitch:0, color:'#00ffaa', label:'Root' },
+  { step:8, len:1, pitch:2, color:'#00ffaa', label:'3rd' },
+  { step:9, len:1, pitch:4, color:'#00ffaa', label:'5th' },
+  // Counter fills gap (steps 10-11)
+  { step:10, len:2, pitch:6, color:'#ff4d6d', label:'Counter' },
+  // Main holds (12-15)
+  { step:12, len:4, pitch:0, color:'#00ffaa', label:'Root hold' },
+], 16);
+
+// Law 2: Contrary Motion — main ascends while counter descends
+buildPitchRoll('law2Viz', [
+  { step:0,  len:2, pitch:0, color:'#00ffaa', label:'Root↑' },
+  { step:2,  len:2, pitch:2, color:'#00ffaa', label:'3rd↑' },
+  { step:4,  len:2, pitch:4, color:'#00ffaa', label:'5th↑' },
+  { step:6,  len:2, pitch:6, color:'#00ffaa', label:'7th↑' },
+  { step:8,  len:2, pitch:7, color:'#00ffaa', label:'Oct↑' },
+  // Counter DESCENDS simultaneously (shown offset for clarity — both play at same time)
+  { step:0,  len:2, pitch:7, color:'#ff4d6d', label:'Oct↓' },
+  { step:2,  len:2, pitch:5, color:'#ff4d6d', label:'6th↓' },
+  { step:4,  len:2, pitch:4, color:'#ff4d6d', label:'5th↓' },
+  { step:6,  len:2, pitch:2, color:'#ff4d6d', label:'3rd↓' },
+  { step:8,  len:2, pitch:0, color:'#ff4d6d', label:'Root↓' },
+], 16);
+
+// Law 3: Different Rhythm — main has long notes, counter has quick 16ths
+buildPitchRoll('law3Viz', [
+  // Main: long notes on root and 5th
+  { step:0, len:4, pitch:0, color:'#00ffaa', label:'Root — 4 beats' },
+  { step:4, len:4, pitch:4, color:'#00ffaa', label:'5th — 4 beats' },
+  { step:8, len:4, pitch:2, color:'#00ffaa', label:'3rd — 4 beats' },
+  { step:12,len:4, pitch:0, color:'#00ffaa', label:'Root — 4 beats' },
+  // Counter: quick 16th note runs filling rhythmic space
+  { step:1, len:1, pitch:2, color:'#ffd700', label:'3rd' },
+  { step:2, len:1, pitch:3, color:'#ffd700', label:'4th' },
+  { step:3, len:1, pitch:4, color:'#ffd700', label:'5th' },
+  { step:5, len:1, pitch:5, color:'#ffd700', label:'6th' },
+  { step:6, len:1, pitch:6, color:'#ffd700', label:'7th' },
+  { step:7, len:1, pitch:7, color:'#ffd700', label:'Oct' },
+  { step:9, len:1, pitch:4, color:'#ffd700', label:'5th' },
+  { step:10,len:1, pitch:3, color:'#ffd700', label:'4th' },
+  { step:11,len:1, pitch:2, color:'#ffd700', label:'3rd' },
+  { step:13,len:1, pitch:1, color:'#ffd700', label:'2nd' },
+  { step:14,len:1, pitch:0, color:'#ffd700', label:'Root' },
+  { step:15,len:1, pitch:2, color:'#ffd700', label:'3rd' },
+], 16);
 
 function playLaw(num) {
   stopMelody();
   const ctx = getCtx();
+  const scale = getActiveScale();
+  const rs = scale.rootSemi;
+  const ivs = scale.intervals;
   const stepDur = (60/140)/4;
   const now = ctx.currentTime + 0.05;
-  const aMinorUp   = [NOTE_FREQ.A4, NOTE_FREQ.C5, NOTE_FREQ.E5, NOTE_FREQ.A4];
-  const aMinorDown = [NOTE_FREQ.E5, NOTE_FREQ.C5, NOTE_FREQ.A4, NOTE_FREQ.E4];
-  const counter1   = [NOTE_FREQ.E5, NOTE_FREQ.G4];
+
+  // Helper: get freq for degree index + octave offset
+  function df(degIdx, octOff) {
+    const semi = ivs[Math.min(degIdx, ivs.length-1)];
+    const noteName = CHROMA_DISPLAY[(rs + semi) % 12];
+    return FULL_NOTE_FREQ[noteName+(4+octOff)] || FULL_NOTE_FREQ[noteName+'4'] || 440;
+  }
 
   if (num === 1) {
-    // Main on 0-3, 8-11; counter on 4-5, 12-14
-    [0,1,2,3].forEach((s,i) => playMelNote(aMinorUp[i], now+s*stepDur, stepDur*0.9, 'sine', 0.3));
-    [8,9,10,11].forEach((s,i) => playMelNote(aMinorUp[i], now+s*stepDur, stepDur*0.9, 'sine', 0.3));
-    playMelNote(NOTE_FREQ.E5, now+4*stepDur, stepDur*1.8, 'triangle', 0.22);
-    playMelNote(NOTE_FREQ.C5, now+12*stepDur, stepDur*2.8, 'triangle', 0.22);
+    // Main: root,3rd,5th,root on steps 0-3 and 6-9; Counter: 5th and 6th fill gaps 4-5, 10-11
+    [0,1,2,3].forEach((s,i) => playMelNote([df(0,0),df(2,0),df(4,0),df(0,0)][i], now+s*stepDur, stepDur*0.88, 'sine', 0.3));
+    playMelNote(df(4,0), now+4*stepDur, stepDur*1.8, 'triangle', 0.22);
+    [6,7,8,9].forEach((s,i) => playMelNote([df(0,0),df(2,0),df(4,0),df(0,0)][i], now+s*stepDur, stepDur*0.88, 'sine', 0.3));
+    playMelNote(df(5,0), now+10*stepDur, stepDur*1.8, 'triangle', 0.22);
+    playMelNote(df(0,0), now+12*stepDur, stepDur*3.8, 'sine', 0.28);
   } else if (num === 2) {
-    // Main ascending, counter descending simultaneously
-    [0,2,4,6].forEach((s,i) => playMelNote([NOTE_FREQ.A4,NOTE_FREQ.C5,NOTE_FREQ.E5,NOTE_FREQ.G5][i], now+s*stepDur, stepDur*1.8, 'sine', 0.28));
-    [0,2,4,6].forEach((s,i) => playMelNote([NOTE_FREQ.G5,NOTE_FREQ.E5,NOTE_FREQ.C5,NOTE_FREQ.A4][i], now+s*stepDur, stepDur*1.8, 'triangle', 0.22));
+    // Main ascends, counter descends simultaneously
+    [0,2,4,6,8].forEach((s,i) => playMelNote([df(0,0),df(2,0),df(4,0),df(6<ivs.length?6:ivs.length-1,0),df(0,1)][i], now+s*stepDur, stepDur*1.8, 'sine', 0.28));
+    [0,2,4,6,8].forEach((s,i) => playMelNote([df(0,1),df(6<ivs.length?5:ivs.length-1,0),df(4,0),df(2,0),df(0,0)][i], now+s*stepDur, stepDur*1.8, 'triangle', 0.22));
   } else {
-    // Main: long notes; counter: quick runs
-    playMelNote(NOTE_FREQ.A4, now, stepDur*4, 'sine', 0.3);
-    playMelNote(NOTE_FREQ.E5, now+stepDur*4, stepDur*4, 'sine', 0.3);
-    // Counter quick 16ths
-    [2,3,5,6,9,10].forEach(s => playMelNote([NOTE_FREQ.C5,NOTE_FREQ.D5,NOTE_FREQ.E5,NOTE_FREQ.G5][s%4], now+s*stepDur, stepDur*0.8, 'triangle', 0.2));
+    // Main: long notes; counter: quick 16th fills
+    playMelNote(df(0,0), now, stepDur*4, 'sine', 0.3);
+    playMelNote(df(4,0), now+stepDur*4, stepDur*4, 'sine', 0.3);
+    playMelNote(df(2,0), now+stepDur*8, stepDur*4, 'sine', 0.3);
+    playMelNote(df(0,0), now+stepDur*12, stepDur*4, 'sine', 0.28);
+    [1,2,3,5,6,7,9,10,11,13,14,15].forEach(s => {
+      const di = s % ivs.length;
+      playMelNote(df(di,0), now+s*stepDur, stepDur*0.8, 'triangle', 0.18);
+    });
   }
 }
 
@@ -2406,29 +2700,44 @@ function playLaw(num) {
 function buildMotifExamples() {
   const el = document.getElementById('motifExamples');
   if (!el) return;
+  el.innerHTML = '';
+  const scale = getActiveScale();
+  const rs = scale.rootSemi;
+  const ivs = scale.intervals;
+  function mf(di, oct) {
+    const semi = ivs[Math.min(di, ivs.length-1)];
+    const n = CHROMA_DISPLAY[(rs + semi) % 12];
+    return { name: n+(oct||4), freq: FULL_NOTE_FREQ[n+(oct||4)] || FULL_NOTE_FREQ[n+'4'] || 440 };
+  }
+  const r=mf(0,4), t=mf(2,4), f=mf(4,4), hi=mf(0,5);
+  // 4th above root = 3rd degree up in some scales, use interval[3] if available
+  const fourth = ivs.length>3 ? mf(3,4) : mf(2,4);
+  const sixth  = ivs.length>5 ? mf(5,4) : mf(4,4);
+
   const MOTIF_DEFS = [
-    { label:'Original', desc:'A4 → C5 → E5 (root, 3rd, 5th — pure resolution)', notes:[NOTE_FREQ.A4, NOTE_FREQ.C5, NOTE_FREQ.E5], color:'var(--accent)' },
-    { label:'Retrograde', desc:'E5 → C5 → A4 (played backward — same notes, different emotional arc)', notes:[NOTE_FREQ.E5, NOTE_FREQ.C5, NOTE_FREQ.A4], color:'var(--accent2)' },
-    { label:'Transposed up 4th', desc:'D5 → F5 → A5 (same shape, new harmonic territory)', notes:[NOTE_FREQ.D5, NOTE_FREQ.F5, NOTE_FREQ.A5], color:'var(--accent3)' },
-    { label:'Rhythmic variation', desc:'Same pitches as original but now: 16th, dotted 8th, quarter (rhythm changes feel)', notes:[NOTE_FREQ.A4, NOTE_FREQ.C5, NOTE_FREQ.E5], rhythm:[0.5,1.5,2], color:'var(--hat2)' },
+    { label:'Original',         desc:`${r.name}→${t.name}→${f.name} (root→3rd→5th — pure upward resolution)`, noteDefs:[r,t,f], rhythm:[0,2,4], color:'var(--accent)' },
+    { label:'Retrograde',       desc:`${f.name}→${t.name}→${r.name} (reversed — same notes, different arc)`, noteDefs:[f,t,r], rhythm:[0,2,4], color:'var(--accent2)' },
+    { label:'Transposed +4th',  desc:`${fourth.name}→${sixth.name}→${hi.name} (same shape, higher territory)`, noteDefs:[fourth,sixth,hi], rhythm:[0,2,4], color:'var(--accent3)' },
+    { label:'Rhythmic var.',    desc:`${r.name}→${t.name}→${f.name} — 16th, dotted 8th, quarter (rhythm reshapes feel)`, noteDefs:[r,t,f], rhythm:[0.5,1.5,3], color:'var(--hat2)' },
   ];
   MOTIF_DEFS.forEach(m => {
     const row = document.createElement('div');
-    row.style.cssText = `display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--panel);border-radius:5px;`;
-    row.innerHTML = `<div style="font-family:'Space Mono',monospace;font-size:10px;color:${m.color};width:110px;flex-shrink:0;">${m.label}</div>
-      <div style="display:flex;gap:4px;flex:1;">${m.notes.map((n,i) => `<div style="background:${m.color}22;border:1px solid ${m.color}60;border-radius:3px;padding:4px 8px;font-family:'Space Mono',monospace;font-size:9px;color:${m.color};">${['A→','C→','E'][i]}${i<2?'':''}</div>`).join('')}</div>
-      <div style="font-size:11px;color:var(--muted);flex:2;">${m.desc}</div>`;
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--panel);border-radius:5px;flex-wrap:wrap;';
+    const noteChips = m.noteDefs.map((nd,i) =>
+      `<div style="background:${m.color}22;border:1px solid ${m.color}60;border-radius:3px;padding:3px 7px;font-family:Space Mono,monospace;font-size:9px;color:${m.color};">${nd.name}${i<m.noteDefs.length-1?'→':''}</div>`
+    ).join('');
+    row.innerHTML = `<div style="font-family:Space Mono,monospace;font-size:10px;color:${m.color};width:100px;flex-shrink:0;">${m.label}</div>
+      <div style="display:flex;gap:3px;flex-wrap:wrap;">${noteChips}</div>
+      <div style="font-size:11px;color:var(--muted);flex:2;min-width:120px;">${m.desc}</div>`;
     const btn = document.createElement('button');
     btn.className = 'play-mel';
     btn.style.cssText = `background:${m.color};color:#000;font-weight:700;font-size:9px;padding:5px 10px;border-radius:3px;cursor:pointer;border:none;white-space:nowrap;`;
-    btn.textContent = '▶ PLAY';
+    btn.textContent = '▶';
     btn.onclick = () => {
       stopMelody();
-      const ctx = getCtx();
-      const now = ctx.currentTime + 0.05;
-      const beats = m.rhythm || [0, 2, 4];
+      const ctx = getCtx(); const now = ctx.currentTime + 0.05;
       const stepDur = (60/140)/4;
-      m.notes.forEach((freq, i) => playMelNote(freq, now + beats[i]*stepDur, stepDur*1.8, 'sine', 0.3));
+      m.noteDefs.forEach((nd, i) => playMelNote(nd.freq, now + m.rhythm[i]*stepDur, stepDur*1.6, 'sine', 0.3));
     };
     row.appendChild(btn);
     el.appendChild(row);
@@ -2729,7 +3038,8 @@ function renderAnatomyDetail(track, segName) {
 }
 
 // ======= INIT ALL =======
-buildPianoRoll();
+buildScalePillUI();
+updateScaleDisplay();
 buildTensionGrid();
 buildMotifExamples();
 buildDensityGrid();
