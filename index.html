@@ -609,6 +609,11 @@
       <button class="btn btn-secondary" onclick="clearAll()">CLEAR</button>
       <input type="range" id="tempoSlider" min="120" max="180" value="160" style="accent-color:var(--accent);width:120px;" oninput="updateTempo(this.value)">
       <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">BPM</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:8px;border-left:1px solid var(--border);padding-left:14px;">
+        <span style="font-family:'Space Mono',monospace;font-size:15px;color:var(--muted);">🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="80" style="accent-color:var(--accent2);width:100px;" oninput="updateVolume(this.value)">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);" id="volumeDisplay">80%</span>
+      </div>
     </div>
   </div>
 
@@ -742,7 +747,7 @@
 
   <div class="info-banner">
     <strong>🔊 The Golden Rule of Bass</strong>
-    Bass frequencies carry the emotional weight of your track. Sub-bass is felt. Mid-bass is heard. Together they create a physical experience. In DnB and jungle, bass is as melodic as any instrument.
+    Bass frequencies carry the emotional weight of your track. Sub-bass is felt. Mid-bass is heard. Together they create a physical experience. In DnB and jungle, bass is as melodic as any instrument — but it also functions as rhythm, texture, and identity all at once.
   </div>
 
   <div class="freq-chart">
@@ -789,6 +794,159 @@
     </div>
   </div>
 
+  <!-- NEW: HOW TO BUILD A BASSLINE -->
+  <div class="card">
+    <div class="card-title">🏗️ How to Actually Build a Bassline — Step by Step</div>
+    <p>Most beginners try to write the bassline and drums at the same time. The pros do it in layers, and there's a specific order that makes everything click together.</p>
+
+    <div style="display:flex;flex-direction:column;gap:0;margin-top:16px;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:40px 1fr;background:rgba(255,77,109,0.08);border-bottom:1px solid var(--border);">
+        <div style="background:var(--accent2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;">1</div>
+        <div style="padding:14px 16px;">
+          <strong style="color:var(--accent2);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px;">LOCK THE ROOT NOTE TO THE KICK</strong>
+          <p style="font-size:13px;color:#c0c0d0;">Start with just one note — the root of your key. Place it <em>exactly</em> where your kick hits. Every kick hit gets a bass note. Now play it back. That single note transforms the kick from a drum into a musical statement. The kick and bass become one object.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;background:rgba(255,157,77,0.08);border-bottom:1px solid var(--border);">
+        <div style="background:var(--perc);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;">2</div>
+        <div style="padding:14px 16px;">
+          <strong style="color:var(--perc);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px;">ADD HELD NOTES BETWEEN KICKS</strong>
+          <p style="font-size:13px;color:#c0c0d0;">Extend your root note so it rings out between kicks as a long held note. The bass now fills the space and creates continuity — it connects the rhythmic hits. The groove becomes a texture, not just a pulse. This is the most important bassline technique in DnB.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;background:rgba(255,215,0,0.08);border-bottom:1px solid var(--border);">
+        <div style="background:var(--accent3);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;">3</div>
+        <div style="padding:14px 16px;">
+          <strong style="color:var(--accent3);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px;">INTRODUCE A SECOND NOTE — THE FIFTH</strong>
+          <p style="font-size:13px;color:#c0c0d0;">Now take the last kick of the bar and change its bass note to the <strong>fifth of the scale</strong> (e.g. A→E in A minor). Suddenly the bassline is moving. It asks a question on beat 4 and answers it on beat 1 of the next bar. This is the root-fifth movement that drives nearly every bass riff ever written.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;background:rgba(0,255,170,0.08);border-bottom:1px solid var(--border);">
+        <div style="background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;">4</div>
+        <div style="padding:14px 16px;">
+          <strong style="color:var(--accent);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px;">ADD RHYTHMIC VARIATION — OFF-BEAT HITS</strong>
+          <p style="font-size:13px;color:#c0c0d0;">Add a short bass hit on a 16th note that <em>doesn't</em> have a kick under it. This is your syncopated "ghost" bass hit. It fills the space between the kick-locked notes and adds the forward-pushing feel of jungle and funk. Keep it short — a 16th note long — and quieter than the main hits.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:40px 1fr;">
+        <div style="background:var(--hat2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:#000;">5</div>
+        <div style="padding:14px 16px;">
+          <strong style="color:var(--hat2);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;display:block;margin-bottom:4px;">ADD TONAL MOVEMENT — PASSING NOTES</strong>
+          <p style="font-size:13px;color:#c0c0d0;">On one of those off-beat ghost hits, use the <strong>minor 3rd or 4th</strong> instead of the root. These are called passing notes — they create a sense of walking from one stable note to the next. In A minor: an Eb or D between an A and an E sounds immediately like electrofunk bass. This single technique is responsible for 80% of all bassline "flavour."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW: UNNATURAL SYNTH BASS INTEGRATION -->
+  <div class="card">
+    <div class="card-title">🤖 Integrating Unnatural Synth Sounds With Traditional Drums</div>
+    <p>This is the real challenge of DnB, neurofunk, and experimental electrofunk — your bass sounds like an alien, but your drums are still basically human. The tension between those two things is what creates the genre. Here's how to make it work instead of clash.</p>
+
+    <div style="margin-top:18px;display:flex;flex-direction:column;gap:14px;">
+
+      <div style="background:var(--panel2);border-radius:8px;padding:18px;border-left:3px solid var(--accent2);">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">⚡ PRINCIPLE 1: The Bass Is a Rhythm Instrument First</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;">No matter how insane your growl, reese, or talking bass sounds, it must still hit on the beat. The <strong>rhythm of the bass notes must be comprehensible</strong> even if the timbre is alien. If the rhythmic relationship between bass and kick is clear, the brain can accept any amount of tonal weirdness.</p>
+        <p style="font-size:13px;color:#c0c0d0;">Think of it this way: the drums are the skeleton. The synth bass is the flesh and skin. You can make the skin look like anything — but the skeleton underneath has to hold the shape.</p>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:8px;padding:18px;border-left:3px solid var(--accent3);">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">🎚 PRINCIPLE 2: Sidechain Compression — The Glue</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;">The single most important technique for integrating synth bass with drums. When the kick hits, a compressor ducks the bass volume slightly and then lets it come back up. This creates space for the kick to punch through and then the bass fills back in — a pumping, breathing relationship between the two elements.</p>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;"><strong style="color:var(--accent3);">In Ableton:</strong> On your bass track, add a Compressor. Click the sidechain arrow and select your kick as the input. Set attack to 1–5ms (fast, catches the kick), release to 80–150ms (lets bass return before next kick). Threshold around -20dB. Ratio 4:1. You'll hear the bass "pump" with every kick. That's the sound.</p>
+        <div class="ableton-tip" style="margin-top:0;">
+          <strong>⚡ ADVANCED: Multi-band Sidechain</strong>
+          Only sidechain the sub frequencies of your bass (use LFO Tool or a parallel chain with a low-pass filter before the compressor). This way only the sub pumps — the mid-bass growl stays constant. The result: rhythmic clarity in the lows without losing the body of your sound.
+        </div>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:8px;padding:18px;border-left:3px solid var(--accent);">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">🔬 PRINCIPLE 3: Transient Alignment — The Click</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;">Synth bass sounds often have slow attacks — the sound grows in over 20–50ms rather than hitting instantly. When this overlaps with the kick's transient, they blur together and both lose definition. The fix is to make sure your bass's amplitude envelope has a <strong>fast attack</strong> on the notes that hit with the kick.</p>
+        <p style="font-size:13px;color:#c0c0d0;">In Serum 2: set your Amp envelope attack to 0–5ms for kick-aligned notes. For held notes between kicks, you can use a longer attack for a smoother, swelling quality. You can automate this per-note using MIDI CC or by drawing envelope automation in Ableton on the bass track.</p>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:8px;padding:18px;border-left:3px solid var(--hat2);">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--hat2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">🎯 PRINCIPLE 4: Rhythmic Counterpoint — Bass Fills The Gaps</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;">The most sophisticated basslines in neurofunk and jungle aren't just playing with the kick — they're playing <em>against</em> it. Where the kick has silence, the bass moves. Where the bass holds, the kick hits. This creates a back-and-forth conversation: two voices interweaving instead of both saying the same thing at the same time.</p>
+        <p style="font-size:13px;color:#c0c0d0;"><strong style="color:var(--hat2);">Practical exercise:</strong> In Ableton, lay out your kick pattern. Now open your bass MIDI clip and <em>only allow bass movement on steps that have NO kick</em>. The result forces a counterpoint relationship and immediately sounds more sophisticated than a bass that just doubles the kick.</p>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:8px;padding:18px;border-left:3px solid var(--perc);">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--perc);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">🌀 PRINCIPLE 5: Filter Movement = Rhythmic Identity</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;">In neurofunk and electrofunk, the <strong>filter movement IS the rhythm</strong>. A static bass note that has its filter opening and closing in sync with the beat is perceived as rhythmically active even when the pitch isn't changing. This is how a held whole-note bass can feel as dynamic as a drum roll.</p>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:8px;"><strong style="color:var(--perc);">In Serum 2:</strong> Assign LFO1 to Filter Cutoff. Set LFO1 to sync to your DAW tempo. Try 1/4, 1/8, or 1/16 rates. A 1/8th-note LFO on the filter with the bass holding a root note creates a "wah-wah" rhythm that locks perfectly with the drums. This is the electrofunk vocabulary in its most direct form.</p>
+        <div class="ableton-tip" style="margin-top:0;">
+          <strong>⚡ ABLETON: AUTOMATE THE LFO RATE</strong>
+          Draw automation on the Serum 2 macro knob you've mapped to LFO Rate. Switch it from 1/4 to 1/8 to 1/16 across the track. The filter rhythm doubles in speed and creates a feeling of accelerating energy — perfect for builds.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NEW: GENRE-SPECIFIC BASS INTEGRATION -->
+  <div class="card">
+    <div class="card-title">🎭 Genre Breakdown — How Bass Relates to Drums by Style</div>
+
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+      <div style="background:var(--panel2);border-radius:6px;padding:16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:8px;letter-spacing:1px;">NEUROFUNK / DnB</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:6px;"><strong>Relationship:</strong> Bass and kick are almost inseparable. The bass <em>is</em> the melody. The kick is a trigger for the bass movement — every kick lands with a bass hit, and the bass continues mutating and modulating between kicks.</p>
+        <p style="font-size:13px;color:#c0c0d0;"><strong>The key technique:</strong> Program the bass to morph its timbre continuously. The kick confirms the beat. The bass makes the beat sound alien. The snare on beat 3 (half-time) creates the heaviness that makes room for the bass to be complex and loud without overwhelming.</p>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:6px;padding:16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);margin-bottom:8px;letter-spacing:1px;">JUNGLE / BREAKBEAT</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:6px;"><strong>Relationship:</strong> The drums are chaotic (syncopated break), so the bass must be more anchored and clear. The bass typically holds long root notes through the complexity of the break and moves only occasionally. This contrast is what makes the rolling drums feel energetic — the bass is the calm center of the storm.</p>
+        <p style="font-size:13px;color:#c0c0d0;"><strong>The key technique:</strong> Keep bass movement to 1–2 note changes per bar. Let the drums be the complex voice. The contrast between chaotic drums and anchored bass is the defining tension of jungle.</p>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:6px;padding:16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:8px;letter-spacing:1px;">ELECTROFUNK / GRIZ STYLE</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:6px;"><strong>Relationship:</strong> The drums are grounded and funky (kick on 1, syncopated kick on the "and" of 3, snare on 2 and 4). The bass is conversational — it responds to and answers the drums melodically. Think of a funk bassist reacting to a drummer in real time.</p>
+        <p style="font-size:13px;color:#c0c0d0;"><strong>The key technique:</strong> Build your bass riff <em>around</em> the spaces in the kick pattern. The kick says something. The bass responds. The kick says something again. The bass finishes the sentence. This call-and-response structure is the heart of electrofunk and the thing that makes GRiZ sound like a live band even when it isn't.</p>
+      </div>
+
+      <div style="background:var(--panel2);border-radius:6px;padding:16px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--hat2);margin-bottom:8px;letter-spacing:1px;">CLOZEE / PSYCHEDELIC BASS MUSIC</div>
+        <p style="font-size:13px;color:#c0c0d0;margin-bottom:6px;"><strong>Relationship:</strong> The drums are often simpler and more tribal (four-on-the-floor kick or a slower half-time pattern). The bass is allowed to be wildly organic and melodic. The bass and lead synth often blur — it's not always clear which is which.</p>
+        <p style="font-size:13px;color:#c0c0d0;"><strong>The key technique:</strong> Use the bass as a textural instrument as much as a rhythmic one. Let it breathe and evolve. Use long held notes with heavy filter modulation. The simplicity of the drums creates the space for the bass to be expressive and free. Less is more in the rhythm, which means the bass can do more.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW: THE BASS ARCHITECTURE CONCEPT -->
+  <div class="card">
+    <div class="card-title">🏛️ Bass Architecture — Thinking in Layers</div>
+    <p>Professional bass music doesn't have "a bass" — it has a <strong>bass architecture</strong> made of 3–4 distinct layers that each do a different job. Understanding these layers changes how you hear and build everything.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+      <div style="background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.25);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent2);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Layer 1: The Sub</div>
+        <p style="font-size:12px;color:#c0c0d0;">Sine wave, 40–80Hz. Mono. Never moves much. This is the foundation. It doesn't need to be interesting — it needs to be present and consistent. You feel this layer, you don't really hear it.</p>
+      </div>
+      <div style="background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.25);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent3);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Layer 2: The Body</div>
+        <p style="font-size:12px;color:#c0c0d0;">Reese or growl, 80–300Hz. This is the warmth and weight you hear in headphones. It carries the rhythmic identity of the bassline. This is the layer that breathes with the kick via sidechain.</p>
+      </div>
+      <div style="background:rgba(0,255,170,0.08);border:1px solid rgba(0,255,170,0.25);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Layer 3: The Presence</div>
+        <p style="font-size:12px;color:#c0c0d0;">The upper harmonic content of your synth — 300Hz–2kHz. This is the growl, the vowel movement, the "talking" quality. This layer is where all the interesting Serum 2 modulation lives. It's what makes people say "what IS that sound?"</p>
+      </div>
+      <div style="background:rgba(77,207,255,0.08);border:1px solid rgba(77,207,255,0.25);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--hat2);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Layer 4: The Air (Optional)</div>
+        <p style="font-size:12px;color:#c0c0d0;">High-passed distortion, 2kHz+. Adds definition, edge, and excitement on big systems. Often a separate parallel distortion chain with heavy saturation and a high-pass filter. This layer makes the bass cut through a full mix.</p>
+      </div>
+    </div>
+
+    <div class="why-box" style="margin-top:14px;">
+      <strong>THE PRACTICAL WORKFLOW</strong>
+      In Ableton, set up 3 tracks for your bass: Sub (sine, Utility mono), Body (Serum 2 main patch, high-passed at 80Hz), and Presence (the same Serum 2 patch on a parallel chain with heavy distortion and high-passed at 300Hz). Group all three. Solo each layer as you build. This is how professional DnB bass sound design works.
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-title">🔊 Serum 2 Bass Patches — Starting Points</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
@@ -803,6 +961,10 @@
       <div style="background:var(--panel2);border-radius:6px;padding:14px;">
         <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);margin-bottom:6px;">PURE SUB LAYER</div>
         <p style="font-size:12px;color:#b0b0c4;">Osc A: Sine · No filter needed · Amp ENV: slow attack (10ms), medium decay, sustain 80%, long release · No FX except maybe subtle saturation · Keep it mono · Volume ride it under the mid-bass layer</p>
+      </div>
+      <div style="background:var(--panel2);border-radius:6px;padding:14px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--hat2);margin-bottom:6px;">NEUROFUNK TALKING BASS</div>
+        <p style="font-size:12px;color:#b0b0c4;">Osc A: Wavetable (Vowel/Formant) · Osc B: Saw sub-octave · Filter: Band Pass + Low Pass in series · LFO1 on Filter Cutoff 1/8 rate · LFO2 on Wavetable Position 1/4 rate · FM from Osc B to Osc A (light amount) · Distortion (Warm/Tube) · Width: 40%</p>
       </div>
     </div>
   </div>
@@ -1012,15 +1174,27 @@ function showSection(id) {
 
 // ======= WEB AUDIO =======
 let audioCtx = null;
+let masterGain = null;
 
 function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.8;
+    masterGain.connect(audioCtx.destination);
+  }
   if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
 
+function getOut() {
+  getCtx();
+  return masterGain;
+}
+
 function playKick(time) {
   const ctx = getCtx();
+  const out = getOut();
   // Sub oscillator: pitched sine sweep 150→40 Hz
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -1043,7 +1217,7 @@ function playKick(time) {
 
   osc.connect(distortion);
   distortion.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(out);
   osc.start(time);
   osc.stop(time + 0.5);
 
@@ -1056,13 +1230,14 @@ function playKick(time) {
   clickGain.gain.setValueAtTime(0.8, time);
   clickGain.gain.exponentialRampToValueAtTime(0.001, time + 0.025);
   clickOsc.connect(clickGain);
-  clickGain.connect(ctx.destination);
+  clickGain.connect(out);
   clickOsc.start(time);
   clickOsc.stop(time + 0.03);
 }
 
 function playSnare(time) {
   const ctx = getCtx();
+  const out = getOut();
   // Noise body
   const bufSize = ctx.sampleRate * 0.22;
   const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
@@ -1083,7 +1258,7 @@ function playSnare(time) {
 
   noise.connect(noiseFilter);
   noiseFilter.connect(noiseGain);
-  noiseGain.connect(ctx.destination);
+  noiseGain.connect(out);
   noise.start(time);
   noise.stop(time + 0.22);
 
@@ -1096,13 +1271,14 @@ function playSnare(time) {
   oscGain.gain.setValueAtTime(0.5, time);
   oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
   osc.connect(oscGain);
-  oscGain.connect(ctx.destination);
+  oscGain.connect(out);
   osc.start(time);
   osc.stop(time + 0.12);
 }
 
 function playClosedHat(time) {
   const ctx = getCtx();
+  const out = getOut();
   const bufSize = ctx.sampleRate * 0.08;
   const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
   const data = buf.getChannelData(0);
@@ -1121,13 +1297,14 @@ function playClosedHat(time) {
 
   noise.connect(hp);
   hp.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(out);
   noise.start(time);
   noise.stop(time + 0.08);
 }
 
 function playOpenHat(time) {
   const ctx = getCtx();
+  const out = getOut();
   const bufSize = ctx.sampleRate * 0.4;
   const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
   const data = buf.getChannelData(0);
@@ -1152,13 +1329,14 @@ function playOpenHat(time) {
   noise.connect(hp);
   hp.connect(bp);
   bp.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(out);
   noise.start(time);
   noise.stop(time + 0.4);
 }
 
 function playPerc(time) {
   const ctx = getCtx();
+  const out = getOut();
   // Woodblock-style mid-perc
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
@@ -1185,12 +1363,12 @@ function playPerc(time) {
   ng.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
   noise.connect(hp);
   hp.connect(ng);
-  ng.connect(ctx.destination);
+  ng.connect(out);
   noise.start(time);
   noise.stop(time + 0.05);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(out);
   osc.start(time);
   osc.stop(time + 0.07);
 }
@@ -1385,6 +1563,12 @@ function updateTempo(val) {
   bpm = parseInt(val);
   document.getElementById('tempoDisplay').textContent = `♩ ${bpm} BPM`;
   // BPM change takes effect on next scheduler tick automatically
+}
+
+function updateVolume(val) {
+  const v = parseInt(val) / 100;
+  document.getElementById('volumeDisplay').textContent = val + '%';
+  if (masterGain) masterGain.gain.setTargetAtTime(v, audioCtx.currentTime, 0.01);
 }
 
 buildSequencer();
