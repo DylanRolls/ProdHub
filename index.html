@@ -631,6 +631,48 @@
   .anatomy-tab.on { color:var(--accent3); border-bottom-color:var(--accent3); }
   .callout-line { position:absolute; pointer-events:none; }
   .tag-chip { display:inline-block; font-family:'Space Mono',monospace; font-size:9px; padding:2px 8px; border-radius:10px; margin:2px; letter-spacing:.5px; }
+  /* ===== SANDBOX ===== */
+  .sb-wrap { background:var(--panel); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:20px; }
+  .sb-section-header { display:flex; align-items:center; gap:0; border-bottom:1px solid var(--border); overflow-x:auto; }
+  .sb-section-tab { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; padding:10px 14px; border:none; background:none; cursor:pointer; border-right:1px solid var(--border); white-space:nowrap; border-bottom:3px solid transparent; transition:all .15s; flex-shrink:0; }
+  .sb-section-tab.active { border-bottom-color:var(--accent3); color:var(--accent3); }
+  .sb-section-tab:hover { background:var(--panel2); }
+  .sb-track-area { padding:0; }
+  .sb-row { display:flex; align-items:stretch; border-bottom:1px solid rgba(255,255,255,0.04); position:relative; }
+  .sb-row:last-child { border-bottom:none; }
+  .sb-row-label { width:80px; flex-shrink:0; display:flex; flex-direction:column; justify-content:center; align-items:flex-end; padding:0 10px 0 0; border-right:1px solid var(--border); font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.5px; text-transform:uppercase; }
+  .sb-row-sub { font-size:7px; opacity:.5; margin-top:1px; }
+  .sb-cells { display:flex; flex:1; }
+  .sb-cell { flex:1; height:34px; border-right:1px solid rgba(255,255,255,0.03); cursor:pointer; position:relative; transition:background .1s; display:flex; align-items:center; justify-content:center; }
+  .sb-cell:nth-child(4n) { border-right:1px solid rgba(255,255,255,0.08); }
+  .sb-cell:nth-child(8n) { border-right:1px solid rgba(255,255,255,0.14); }
+  .sb-cell.filled { }
+  .sb-cell.suggested { }
+  .sb-cell.suggested::after { content:''; position:absolute; inset:3px; border-radius:2px; border:2px dashed; opacity:.55; pointer-events:none; }
+  .sb-cell:hover { filter:brightness(1.4); }
+  .sb-bar-nums { display:flex; padding-left:80px; border-bottom:1px solid var(--border); background:var(--panel2); }
+  .sb-bar-num { flex:1; text-align:center; font-family:'Space Mono',monospace; font-size:8px; color:var(--muted); padding:3px 0; border-right:1px solid rgba(255,255,255,0.03); }
+  .sb-bar-num.sb-beat1 { color:var(--accent3); font-weight:700; }
+  .sb-overview { display:flex; height:32px; border-bottom:1px solid var(--border); background:var(--panel2); }
+  .sb-ov-seg { display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-size:8px; font-weight:700; letter-spacing:1px; cursor:pointer; border-right:1px solid rgba(0,0,0,0.4); flex-shrink:0; transition:filter .15s; }
+  .sb-ov-seg:hover { filter:brightness(1.3); }
+  .sb-ov-seg.active { outline:2px solid #fff; outline-offset:-2px; }
+  .sb-tooltip { position:fixed; background:#1a1a28; border:1px solid var(--accent); border-radius:6px; padding:10px 14px; font-size:12px; color:#e0e0f0; max-width:280px; z-index:9999; pointer-events:none; box-shadow:0 8px 24px rgba(0,0,0,0.5); line-height:1.5; display:none; }
+  .sb-tooltip strong { display:block; font-family:'Space Mono',monospace; font-size:10px; color:var(--accent); margin-bottom:4px; letter-spacing:1px; }
+  .sb-tooltip .sb-tip-link { display:block; margin-top:6px; font-family:'Space Mono',monospace; font-size:9px; color:var(--accent3); opacity:.8; }
+  .sb-controls { display:flex; gap:8px; align-items:center; padding:14px 16px; border-top:1px solid var(--border); flex-wrap:wrap; background:var(--panel2); }
+  .sb-score { font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); }
+  .sb-score span { color:var(--accent3); font-weight:700; }
+  .sb-clear-section { font-family:'Space Mono',monospace; font-size:10px; padding:6px 12px; background:none; border:1px solid var(--border); color:var(--muted); border-radius:4px; cursor:pointer; }
+  .sb-clear-section:hover { border-color:var(--accent2); color:var(--accent2); }
+  .sb-legend { display:flex; gap:12px; flex-wrap:wrap; padding:10px 16px; border-top:1px solid var(--border); }
+  .sb-legend-item { display:flex; align-items:center; gap:5px; font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); }
+  .sb-legend-dot { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
+  .sb-progress { height:4px; background:var(--panel2); border-radius:0; }
+  .sb-progress-bar { height:100%; background:linear-gradient(to right,var(--accent),var(--accent3)); border-radius:0; transition:width .3s; }
+  .sb-feedback { background:var(--panel2); border-left:3px solid var(--accent); border-radius:0 6px 6px 0; padding:12px 16px; margin:0 0 16px 0; font-size:13px; color:#c0c0d0; min-height:48px; }
+  .sb-feedback strong { font-family:'Space Mono',monospace; font-size:10px; color:var(--accent); display:block; margin-bottom:4px; letter-spacing:1px; }
+
 </style>
 </head>
 <body>
@@ -642,13 +684,14 @@
 </header>
 
 <nav id="nav">
-  <button class="nav-btn active" onclick="showSection('drums')">🥁 Drums</button>
-  <button class="nav-btn" onclick="showSection('rhythm')">🎯 Rhythm Theory</button>
-  <button class="nav-btn" onclick="showSection('bass')">🔊 Bass & Freq</button>
-  <button class="nav-btn" onclick="showSection('melody')">🎵 Melody</button>
-  <button class="nav-btn" onclick="showSection('structure')">📐 Structure</button>
-  <button class="nav-btn" onclick="showSection('anatomy')">🔬 Track Anatomy</button>
-  <button class="nav-btn" onclick="showSection('ableton')">⚡ Ableton Tips</button>
+  <button class="nav-btn active" onclick="showSection('drums',this)">🥁 Drums</button>
+  <button class="nav-btn" onclick="showSection('rhythm',this)">🎯 Rhythm Theory</button>
+  <button class="nav-btn" onclick="showSection('bass',this)">🔊 Bass & Freq</button>
+  <button class="nav-btn" onclick="showSection('melody',this)">🎵 Melody</button>
+  <button class="nav-btn" onclick="showSection('structure',this)">📐 Structure</button>
+  <button class="nav-btn" onclick="showSection('anatomy',this)">🔬 Track Anatomy</button>
+  <button class="nav-btn" onclick="showSection('ableton',this)">⚡ Ableton Tips</button>
+  <button class="nav-btn" onclick="showSection('sandbox',this)">🎛 Sandbox</button>
 </nav>
 
 <!-- ===== DRUMS ===== -->
@@ -1471,13 +1514,82 @@
   </div>
 </div>
 
+<!-- ===== SANDBOX ===== -->
+<div id="sandbox" class="section">
+  <div class="section-title">Arrangement Sandbox</div>
+  <div class="section-sub">128-bar guided arrangement · click to place elements · follow the suggestions</div>
+
+  <div class="info-banner">
+    <strong>🎛 How to Use This Sandbox</strong>
+    Build a complete 128-bar arrangement from scratch. Click a section in the overview bar, then click cells to toggle elements on/off. <span style="color:var(--accent3);">Dashed highlights</span> show what the guide suggests next. Hover any cell for a tip referencing what you learned in the rest of this hub. The guide watches what you've placed and responds in real time.
+  </div>
+
+  <!-- Progress -->
+  <div class="sb-progress"><div class="sb-progress-bar" id="sbProgressBar" style="width:0%"></div></div>
+
+  <!-- Live feedback -->
+  <div class="sb-feedback" id="sbFeedback">
+    <strong>GUIDE</strong>Start by selecting the INTRO section above, then click the KICK row in the first few bars. Even in an intro, a subtle kick or hat pattern establishes the tempo. Watch for dashed suggestions as you work.
+  </div>
+
+  <!-- Arrangement overview bar -->
+  <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;">FULL TRACK OVERVIEW — click a section to edit it</div>
+  <div class="sb-overview" id="sbOverview"></div>
+
+  <!-- Main sequencer -->
+  <div class="sb-wrap" id="sbWrap">
+    <div class="sb-bar-nums" id="sbBarNums"></div>
+    <div class="sb-track-area" id="sbTrackArea"></div>
+    <div class="sb-legend">
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#ff4d6d;"></div>Kick</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#ffd700;"></div>Snare</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#00ffaa;"></div>Hi-Hat</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#ff9d4d;"></div>Sub Bass</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#ff6a9d;"></div>Mid-Bass</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#4dcfff;"></div>Melody</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#b070ff;"></div>Counter</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#7b9fff;"></div>Atmosphere</div>
+      <div class="sb-legend-item"><div class="sb-legend-dot" style="background:#ffd70088;border:2px dashed #ffd700;"></div>Suggested</div>
+    </div>
+    <div class="sb-controls">
+      <button class="btn btn-primary" id="sbPlayBtn" onclick="sbTogglePlay()">▶ PLAY SECTION</button>
+      <button class="btn btn-secondary" onclick="sbClearSection()">CLEAR SECTION</button>
+      <button class="btn btn-secondary" onclick="sbClearAll()">CLEAR ALL</button>
+      <button class="btn btn-secondary" onclick="sbAutoFill()">💡 AUTO-SUGGEST SECTION</button>
+      <div class="sb-score">Completion: <span id="sbScoreNum">0</span>/128 bars filled</div>
+    </div>
+  </div>
+
+  <div class="sb-tooltip" id="sbTooltip"></div>
+
+  <!-- Element guide cards -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">🗺️ Arrangement Logic</div>
+      <p style="font-size:13px;color:#c0c0d0;">This sandbox reflects the structure science from the <strong>Structure</strong> and <strong>Track Anatomy</strong> sections. The guide knows what belongs in each section and gives you credit for correct placement.</p>
+      <div class="why-box" style="margin-top:10px;"><strong>RULE OF THUMB</strong>Intro: atmosphere + hats. Build: add drums + mid-bass. Drop: everything including sub + melody. Break: strip to melody only. Drop 2: everything + counter. Outro: reverse the intro.</div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-title">📐 Section Lengths</div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-top:4px;">
+        <div style="display:flex;gap:8px;align-items:center;"><div style="width:8px;height:8px;background:#4dcfff;border-radius:1px;flex-shrink:0;"></div><span style="font-size:12px;color:#c0c0d0;"><strong>Intro</strong> — 8 bars. Patient. Establish tempo and key.</span></div>
+        <div style="display:flex;gap:8px;align-items:center;"><div style="width:8px;height:8px;background:#ffd700;border-radius:1px;flex-shrink:0;"></div><span style="font-size:12px;color:#c0c0d0;"><strong>Build</strong> — 16 bars. Add density. Riser at end.</span></div>
+        <div style="display:flex;gap:8px;align-items:center;"><div style="width:8px;height:8px;background:#ff4d6d;border-radius:1px;flex-shrink:0;"></div><span style="font-size:12px;color:#c0c0d0;"><strong>Drop 1</strong> — 32 bars. Full energy. Melody enters.</span></div>
+        <div style="display:flex;gap:8px;align-items:center;"><div style="width:8px;height:8px;background:#b070ff;border-radius:1px;flex-shrink:0;"></div><span style="font-size:12px;color:#c0c0d0;"><strong>Break</strong> — 16 bars. Strip everything. Emotional core.</span></div>
+        <div style="display:flex;gap:8px;align-items:center;"><div style="width:8px;height:8px;background:#ff9d4d;border-radius:1px;flex-shrink:0;"></div><span style="font-size:12px;color:#c0c0d0;"><strong>Drop 2</strong> — 32 bars. Max layers. Counter melody.</span></div>
+        <div style="display:flex;gap:8px;align-items:center;"><div style="width:8px;height:8px;background:#00ffaa;border-radius:1px;flex-shrink:0;"></div><span style="font-size:12px;color:#c0c0d0;"><strong>Outro</strong> — 24 bars. Wind down. Return to atmosphere.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ======= NAV =======
-function showSection(id) {
+function showSection(id, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 // ======= WEB AUDIO =======
@@ -3037,9 +3149,512 @@ function renderAnatomyDetail(track, segName) {
     </div>`;
 }
 
+
+// ======= ARRANGEMENT SANDBOX =======
+
+// 128 bars total, 7 sections
+const SB_SECTIONS = [
+  { id:'intro',  label:'INTRO',   bars:8,  color:'#0d1e2a', tc:'#4dcfff',  startBar:0   },
+  { id:'build',  label:'BUILD',   bars:16, color:'#1a1a08', tc:'#ffd700',  startBar:8   },
+  { id:'drop1',  label:'DROP 1', bars:32, color:'#240c0c', tc:'#ff4d6d',  startBar:24  },
+  { id:'break',  label:'BREAK',   bars:16, color:'#0e0e22', tc:'#b070ff',  startBar:56  },
+  { id:'drop2',  label:'DROP 2', bars:32, color:'#1e0c14', tc:'#ff9d4d',  startBar:72  },
+  { id:'outro',  label:'OUTRO',   bars:24, color:'#0c1a0c', tc:'#00ffaa',  startBar:104 },
+];
+const SB_TOTAL_BARS = 128;
+
+// Track rows: id, label, sub-label, color, suggested-per-section (1=yes,0=no,2=strongly)
+const SB_ROWS = [
+  { id:'kick',  label:'KICK',    sub:'foundation', color:'#ff4d6d',
+    suggest:{ intro:0, build:1, drop1:2, break:0, drop2:2, outro:0 } },
+  { id:'snare', label:'SNARE',   sub:'backbeat',   color:'#ffd700',
+    suggest:{ intro:0, build:1, drop1:2, break:0, drop2:2, outro:0 } },
+  { id:'hat',   label:'HI-HAT',  sub:'groove clock',color:'#00ffaa',
+    suggest:{ intro:1, build:2, drop1:2, break:0, drop2:2, outro:1 } },
+  { id:'sub',   label:'SUB BASS',sub:'20-80Hz felt',color:'#ff9d4d',
+    suggest:{ intro:0, build:0, drop1:2, break:0, drop2:2, outro:0 } },
+  { id:'midbass',label:'MID-BASS',sub:'80-300Hz heard',color:'#ff6a9d',
+    suggest:{ intro:0, build:1, drop1:2, break:0, drop2:2, outro:0 } },
+  { id:'melody',label:'MELODY',  sub:'lead voice',  color:'#4dcfff',
+    suggest:{ intro:0, build:0, drop1:2, break:1, drop2:2, outro:0 } },
+  { id:'counter',label:'COUNTER',sub:'fills gaps',   color:'#b070ff',
+    suggest:{ intro:0, build:0, drop1:0, break:1, drop2:2, outro:0 } },
+  { id:'atmos', label:'ATMOS',   sub:'reverb/pads',  color:'#7b9fff',
+    suggest:{ intro:2, build:1, drop1:0, break:1, drop2:0, outro:2 } },
+];
+
+// Tips per row per section — rich educational content
+const SB_TIPS = {
+  kick: {
+    intro:  'Intro: No kick yet. Let the atmosphere breathe first. The dopamine hit of the first kick is wasted if it arrives too early. → See: Structure section.',
+    build:  'Build: Kick enters here to establish the groove before the drop. Kick on beats 1 & 3 creates the downbeat anchor. → See: Drums section, Rhythm Theory.',
+    drop1:  'Drop 1: Kick is the gravitational center of the drop. Lock it tight with the sub bass (kick-bass lock). Every kick hit gets a bass note underneath it. → See: Bass section.',
+    break:  'Break: Kick should be ABSENT or very sparse. Its disappearance is what makes Drop 2 feel heavier when it returns. The frequency vacuum is the tool. → See: Bass & Freq.',
+    drop2:  'Drop 2: Kick returns with full force. Consider adding ghost kick hits between the main hits for extra density vs Drop 1. → See: Drum Patterns.',
+    outro:  'Outro: Kick fades out early — usually first element to leave. Its absence signals the track is ending. → See: Track Anatomy, Outro section.',
+  },
+  snare: {
+    intro:  'Intro: No snare yet. The snare on beats 2 & 4 is the backbeat — it would reveal the full groove too early. Save it for the build. → See: Rhythm Theory.',
+    build:  'Build: Snare enters to establish the backbeat (beats 2 & 4). A snare roll in the last 2 bars before Drop 1 creates tremendous anticipation. → See: Structure, Science of the Drop.',
+    drop1:  'Drop 1: Full snare on beats 2 & 4 (or half-time: beat 3 only). The backbeat is what people clap to — it locks the listener in. → See: Drums section.',
+    break:  'Break: Remove the snare. Its absence, combined with no kick, creates the emotional spaciousness the break needs. → See: Track Anatomy, Break section.',
+    drop2:  'Drop 2: Add ghost snare notes between the main hits. More density than Drop 1 — this is one way to make Drop 2 feel bigger without adding new melodic elements. → See: Rhythm Theory, Ghost Notes.',
+    outro:  'Outro: Snare fades with the kick. May stay longer than the kick for a brief "just drums" moment before total strip-down. → See: Track Anatomy, Outro.',
+  },
+  hat: {
+    intro:  'Intro: Hi-hats are often the ONLY rhythmic element in an intro. At low velocity, they establish BPM subconsciously before the full beat arrives. → See: Drums section.',
+    build:  'Build: Full hat pattern — every 8th note. The hat is the "groove clock." Dense hats in the build increase energy density without needing more elements. → See: Rhythm Theory.',
+    drop1:  'Drop 1: Syncopated hats with open hat on the "and" of beat 2. Vary the velocity — louder on downbeats, softer off-beats. This is what creates swing. → See: Rhythm Theory, Swing.',
+    break:  'Break: Remove hats entirely. The silence is musical. Their absence makes the melodic content cleaner and more emotional. → See: Structure, Breakdown.',
+    drop2:  'Drop 2: Same as Drop 1 but consider adding a 16th-note hat layer for extra density. Or add perc elements alongside hats. → See: Drums section.',
+    outro:  'Outro: Let hats be the last rhythmic element. A single hi-hat ticking into silence is a classic electronic music ending. → See: Track Anatomy, Outro.',
+  },
+  sub: {
+    intro:  'Intro: NO sub bass. Sub is the ultimate reveal — it should be completely absent in the intro and build so its arrival at the drop creates maximum physical impact. → See: Bass & Freq.',
+    build:  'Build: Still no sub. This is intentional. The sub absence creates a "frequency vacuum" — the body craves it. When it hits at the drop it feels twice as powerful. → See: Bass, Sidechain.',
+    drop1:  'Drop 1: Sub bass ARRIVES. Lock it to the kick (kick-bass lock). Use a sine wave at A1 or your root note. Mono only. This is physical — your body feels this. → See: Bass Architecture.',
+    break:  'Break: Remove sub bass completely. This is what gives the breakdown its open, airy quality. The low frequency void is part of the emotional design. → See: Bass & Freq.',
+    drop2:  'Drop 2: Sub returns with the same pattern as Drop 1 — the listener has memorized it. Consistency in the sub is grounding while other elements get more complex. → See: Bass Architecture.',
+    outro:  'Outro: Sub fades last of all the bass layers. When the sub disappears you feel it leave — the most physical moment of the outro. → See: Track Anatomy, Outro.',
+  },
+  midbass: {
+    intro:  'Intro: No mid-bass. The Reese or growl bass is a presence-zone element — it would give away too much of the track\'s character too soon. → See: Bass & Freq.',
+    build:  'Build: Mid-bass (Reese, growl) enters HERE — before the sub. The listener hears the bass sound and texture but doesn\'t feel its full weight yet. Creates anticipation. → See: Bass Integration.',
+    drop1:  'Drop 1: Full mid-bass layered with sub. The mid-bass carries the rhythmic identity and the character of the sound. Sidechain it to the kick. → See: Bass, Sidechain Principle 2.',
+    break:  'Break: Remove mid-bass. Keeping only melody in the break creates the emotional naked quality that makes Drop 2 feel like a rescue. → See: Track Anatomy, Break.',
+    drop2:  'Drop 2: Mid-bass can have increased distortion/presence vs Drop 1. The Presence layer in your bass architecture can be louder here. → See: Bass Architecture, Layer 3.',
+    outro:  'Outro: Mid-bass fades before sub — the reverse of the intro. Elements leave in reverse order of arrival. → See: Structure, Outro.',
+  },
+  melody: {
+    intro:  'Intro: No melody yet. Let the listener wonder what the track will sound like. Revealing the melody is your biggest musical gift — don\'t spend it in the intro. → See: Melody section.',
+    build:  'Build: A fragment of the melody might appear here — just a hint. A 2-note tease that previews the hook creates anticipation without revealing it fully. → See: Motif section, Melody.',
+    drop1:  'Drop 1: The melody LANDS here in full for the first time. This is the emotional center of your track. Use your root→peak→resolution arc. → See: Melody, Piano Roll.',
+    break:  'Break: Melody continues but transforms. Slower, more sustained, more vulnerable. The breakdown is where the melody is heard without competition. → See: Melody, Counter-Melody.',
+    drop2:  'Drop 2: Same melody as Drop 1 — the listener has memorized it and will anticipate it. Repetition is recognition. Recognition is reward. → See: Melody, Motif.',
+    outro:  'Outro: Melody fades or is stripped first. Its departure signals the track is ending. Sometimes a single melodic motif echoes into the reverb tail. → See: Track Anatomy, Outro.',
+  },
+  counter: {
+    intro:  'Intro: No counter-melody. It would add complexity before the listener has even heard the main melody. Introduce elements in order of complexity. → See: Counter-Melody section.',
+    build:  'Build: Counter-melody should NOT appear yet. Save it for after Drop 1 has established the main melody. → See: Counter-Melody Laws.',
+    drop1:  'Drop 1: Counter-melody can appear 8-16 bars INTO Drop 1 (not at bar 1). Give the listener time to absorb the main melody before adding the counter voice. → See: Counter-Melody, Law 1.',
+    break:  'Break: This is where counter-melody often gets introduced for the first time if not in Drop 1. In the breakdown, with no drums, the counter has space to breathe and be heard clearly. → See: Counter-Melody.',
+    drop2:  'Drop 2: Counter-melody is fully present and the most developed voice alongside the main melody. Two voices in conversation — this is what makes Drop 2 richer than Drop 1. → See: Counter-Melody Laws.',
+    outro:  'Outro: Counter-melody fades with melody. Their simultaneous exit creates a sense of narrative closure — the conversation is over. → See: Track Anatomy.',
+  },
+  atmos: {
+    intro:  'Intro: Atmosphere is often the FIRST element. A reverb pad, texture, or drone in your key establishes mood and key before anything rhythmic arrives. → See: Structure, Intro.',
+    build:  'Build: Atmosphere can continue from the intro or evolve. It provides harmonic context under the drums and bass that are entering. → See: Structure, Build.',
+    drop1:  'Drop 1: Atmosphere typically drops out at the drop — its absence adds to the sense of arrival and lets the rhythmic and melodic elements dominate. → See: Track Anatomy, Drop 1.',
+    break:  'Break: Atmosphere returns in the breakdown. It creates the emotional space that makes the break feel open and reflective. → See: Track Anatomy, Break.',
+    drop2:  'Drop 2: Atmosphere stays absent just like in Drop 1. Consistency between drop 1 and drop 2 in this element helps the listener recognize the drop structure. → See: Structure.',
+    outro:  'Outro: Atmosphere returns — the track ends where it began. Narrative closure. The same pad that opened the track is the last thing heard. → See: Track Anatomy, Outro.',
+  },
+};
+
+// Feedback messages per section based on fill state
+const SB_SECTION_FEEDBACK = {
+  intro: {
+    empty:   { text: 'Start the INTRO. Place the ATMOSPHERE first — a reverb pad establishes your key and mood before anything rhythmic. Then add HI-HAT at low volume to establish BPM subconsciously.', color: '#4dcfff' },
+    partial: { text: 'Good start. Remember: INTRO = patience. No kick, no bass, no melody yet. The listener is orienting. Every bar of restraint here makes the first drop feel more powerful.', color: '#4dcfff' },
+    full:    { text: 'Intro complete. You have atmosphere and hats — the perfect primer. Now move to the BUILD section and add the full drum pattern.', color: '#00ffaa' },
+  },
+  build: {
+    empty:   { text: 'BUILD section: this is where energy starts climbing. Add KICK + SNARE first to establish the groove. Then add MID-BASS (but NOT sub yet — save the sub for the drop).', color: '#ffd700' },
+    partial: { text: 'The build is taking shape. Key technique: add a RISER (or use atmosphere automation) in the last 4 bars before Drop 1. The sub should still be absent — the frequency vacuum is your tool.', color: '#ffd700' },
+    full:    { text: 'Build looks solid. Drums + mid-bass + hats is the classic build formula. Now for Drop 1 — this is where everything arrives at once. The sub lands HERE.', color: '#00ffaa' },
+  },
+  drop1: {
+    empty:   { text: 'DROP 1: everything arrives simultaneously. Kick + snare + hats + SUB + mid-bass + melody. The sub bass should be locked to the kick (kick-bass lock). The melody is the emotional payoff.', color: '#ff4d6d' },
+    partial: { text: 'Drop building up. Remember the layering order for maximum impact: 1) Full drums, 2) Sub locked to kick, 3) Mid-bass body, 4) Melody. If you have no melody yet, that is your next move.', color: '#ff4d6d' },
+    full:    { text: 'Drop 1 is loaded. Counter-melody can appear around bar 8-16 of this section if you want extra richness. Then strip everything for the BREAK — the contrast is what makes Drop 2 hit harder.', color: '#00ffaa' },
+  },
+  break: {
+    empty:   { text: 'BREAKDOWN: this is the emotional heart of your track. Remove kick, snare, sub, mid-bass. Keep ONLY melody and atmosphere. The nakedness of the melody here is intentional.', color: '#b070ff' },
+    partial: { text: 'Good. The breakdown works through contrast. The more you strip, the harder Drop 2 will hit. Counter-melody works beautifully here — introduce it for the first time if you have not already.', color: '#b070ff' },
+    full:    { text: 'Breakdown configured. Melody + atmosphere + counter is the classic breakdown formula. The listener relaxes, then anticipates. Now build Drop 2 — make it bigger than Drop 1.', color: '#00ffaa' },
+  },
+  drop2: {
+    empty:   { text: 'DROP 2 must be bigger than Drop 1. Start with the same elements as Drop 1, then ADD counter-melody and consider ghost kick/snare hits for extra density.', color: '#ff9d4d' },
+    partial: { text: 'Taking shape. To make Drop 2 feel bigger: 1) Counter-melody should be present (was absent in Drop 1), 2) More percussion density, 3) Bass presence layer slightly louder. Same core, richer texture.', color: '#ff9d4d' },
+    full:    { text: 'Drop 2 is your climax. With counter-melody added to everything from Drop 1, you have three-voice polyphony — bass + melody + counter. This is peak complexity. Wind it down in the OUTRO.', color: '#00ffaa' },
+  },
+  outro: {
+    empty:   { text: 'OUTRO: reverse the intro. Remove elements in reverse order of arrival. Start by removing sub and kick, then snare and melody, then hats, leaving only atmosphere at the end.', color: '#00ffaa' },
+    partial: { text: 'Good outro shape. Let atmosphere be the final element — the same pad that opened the track closing it creates narrative closure. DJs need 16+ bars of clean outro to mix out.', color: '#00ffaa' },
+    full:    { text: 'Track complete! You have built a full 128-bar arrangement. Compare your choices to the Track Anatomy section to see how they map to published tracks. Well done.', color: '#00ffaa' },
+  },
+};
+
+// State: 128 bars × 8 rows
+let sbState = {};  // key: 'bar_row', value: boolean
+let sbActiveSectionIdx = 0;
+let sbPlayTimer = null;
+let sbPlaying = false;
+
+function sbGetSection(barIndex) {
+  for (let i = SB_SECTIONS.length - 1; i >= 0; i--) {
+    if (barIndex >= SB_SECTIONS[i].startBar) return SB_SECTIONS[i];
+  }
+  return SB_SECTIONS[0];
+}
+
+function sbGetActiveSec() { return SB_SECTIONS[sbActiveSectionIdx]; }
+
+function sbBuildOverview() {
+  const el = document.getElementById('sbOverview');
+  if (!el) return;
+  el.innerHTML = '';
+  SB_SECTIONS.forEach((sec, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'sb-ov-seg' + (i === sbActiveSectionIdx ? ' active' : '');
+    seg.style.cssText = `background:${sec.color};color:${sec.tc};width:${(sec.bars/SB_TOTAL_BARS)*100}%;`;
+    seg.textContent = sec.label;
+    seg.title = `${sec.label} — ${sec.bars} bars`;
+    seg.onclick = () => { sbActiveSectionIdx = i; sbBuildOverview(); sbBuildSequencer(); sbUpdateFeedback(); };
+    el.appendChild(seg);
+  });
+}
+
+function sbBuildSequencer() {
+  const sec = sbGetActiveSec();
+  const barNums = document.getElementById('sbBarNums');
+  const trackArea = document.getElementById('sbTrackArea');
+  if (!barNums || !trackArea) return;
+
+  barNums.innerHTML = '';
+  // padding for label column
+  const pad = document.createElement('div');
+  pad.style.cssText = 'width:80px;flex-shrink:0;border-right:1px solid var(--border);';
+  barNums.appendChild(pad);
+  for (let b = 0; b < sec.bars; b++) {
+    const n = document.createElement('div');
+    n.className = 'sb-bar-num' + ((b % 4 === 0) ? ' sb-beat1' : '');
+    n.textContent = sec.startBar + b + 1;
+    barNums.appendChild(n);
+  }
+
+  trackArea.innerHTML = '';
+  SB_ROWS.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'sb-row';
+
+    const lbl = document.createElement('div');
+    lbl.className = 'sb-row-label';
+    lbl.style.color = row.color;
+    lbl.innerHTML = `${row.label}<span class="sb-row-sub">${row.sub}</span>`;
+    rowEl.appendChild(lbl);
+
+    const cells = document.createElement('div');
+    cells.className = 'sb-cells';
+
+    for (let b = 0; b < sec.bars; b++) {
+      const absBar = sec.startBar + b;
+      const key = absBar + '_' + row.id;
+      const isFilled = !!sbState[key];
+      const suggestLevel = row.suggest[sec.id] || 0;
+      const isSuggested = suggestLevel > 0 && !isFilled;
+
+      const cell = document.createElement('div');
+      cell.className = 'sb-cell' + (isFilled ? ' filled' : '') + (isSuggested ? ' suggested' : '');
+      cell.id = `sbc_${absBar}_${row.id}`;
+
+      if (isFilled) {
+        cell.style.background = row.color + (suggestLevel === 2 ? 'ee' : 'cc');
+        cell.style.boxShadow = `inset 0 0 0 1px ${row.color}`;
+      } else if (isSuggested) {
+        cell.style.background = row.color + '18';
+        // dashed border via ::after set in CSS, color via custom prop
+        cell.style.setProperty('--sg-color', row.color);
+        cell.querySelector ? null : null;
+        // inline dashed border since ::after needs CSS var
+        const inner = document.createElement('div');
+        inner.style.cssText = `position:absolute;inset:3px;border-radius:2px;border:2px dashed ${row.color};opacity:${suggestLevel===2?'0.65':'0.35'};pointer-events:none;`;
+        cell.appendChild(inner);
+      }
+
+      // Tooltip events
+      cell.addEventListener('mouseenter', (e) => sbShowTooltip(e, row, sec));
+      cell.addEventListener('mouseleave', sbHideTooltip);
+      cell.addEventListener('mousemove', sbMoveTooltip);
+
+      cell.onclick = () => sbToggleCell(absBar, row.id, cell, row, sec);
+      cells.appendChild(cell);
+    }
+
+    rowEl.appendChild(cells);
+    trackArea.appendChild(rowEl);
+  });
+
+  sbUpdateScore();
+}
+
+function sbToggleCell(absBar, rowId, cellEl, row, sec) {
+  const key = absBar + '_' + rowId;
+  sbState[key] = !sbState[key];
+  const isFilled = sbState[key];
+  const suggestLevel = row.suggest[sec.id] || 0;
+
+  // Clear children (dashed hint)
+  cellEl.innerHTML = '';
+
+  if (isFilled) {
+    cellEl.classList.add('filled');
+    cellEl.classList.remove('suggested');
+    cellEl.style.background = row.color + 'ee';
+    cellEl.style.boxShadow = `inset 0 0 0 1px ${row.color}`;
+  } else {
+    cellEl.classList.remove('filled');
+    if (suggestLevel > 0) {
+      cellEl.classList.add('suggested');
+      cellEl.style.background = row.color + '18';
+      cellEl.style.boxShadow = '';
+      const inner = document.createElement('div');
+      inner.style.cssText = `position:absolute;inset:3px;border-radius:2px;border:2px dashed ${row.color};opacity:${suggestLevel===2?'0.65':'0.35'};pointer-events:none;`;
+      cellEl.appendChild(inner);
+    } else {
+      cellEl.style.background = '';
+      cellEl.style.boxShadow = '';
+    }
+  }
+
+  sbUpdateScore();
+  sbUpdateFeedback();
+}
+
+let sbTooltipTimeout = null;
+function sbShowTooltip(e, row, sec) {
+  clearTimeout(sbTooltipTimeout);
+  sbTooltipTimeout = setTimeout(() => {
+    const tip = document.getElementById('sbTooltip');
+    if (!tip) return;
+    const tips = SB_TIPS[row.id];
+    const msg = tips ? (tips[sec.id] || '') : '';
+    const sugLevel = row.suggest[sec.id] || 0;
+    const badge = sugLevel === 2 ? '✦ STRONGLY SUGGESTED' : sugLevel === 1 ? '◆ SUGGESTED' : '◇ OPTIONAL';
+    tip.innerHTML = `<strong>${row.label} in ${sec.label} — ${badge}</strong>${msg}`;
+    tip.style.display = 'block';
+    sbPositionTooltip(e);
+  }, 200);
+}
+
+function sbPositionTooltip(e) {
+  const tip = document.getElementById('sbTooltip');
+  if (!tip || tip.style.display === 'none') return;
+  const x = Math.min(e.clientX + 16, window.innerWidth - 300);
+  const y = Math.min(e.clientY + 12, window.innerHeight - 160);
+  tip.style.left = x + 'px';
+  tip.style.top = y + 'px';
+}
+
+function sbMoveTooltip(e) { sbPositionTooltip(e); }
+function sbHideTooltip() {
+  clearTimeout(sbTooltipTimeout);
+  const tip = document.getElementById('sbTooltip');
+  if (tip) tip.style.display = 'none';
+}
+
+function sbUpdateScore() {
+  let total = 0;
+  // Count bars that have at least one element
+  const filledBars = new Set();
+  Object.keys(sbState).forEach(k => { if (sbState[k]) { filledBars.add(k.split('_')[0]); total++; } });
+  const el = document.getElementById('sbScoreNum');
+  if (el) el.textContent = filledBars.size;
+
+  const pct = Math.min(100, Math.round((filledBars.size / SB_TOTAL_BARS) * 100));
+  const bar = document.getElementById('sbProgressBar');
+  if (bar) bar.style.width = pct + '%';
+}
+
+function sbUpdateFeedback() {
+  const sec = sbGetActiveSec();
+  const fb = document.getElementById('sbFeedback');
+  if (!fb) return;
+
+  // Count filled rows in this section
+  let filledRows = 0;
+  let totalCells = sec.bars * SB_ROWS.length;
+  let filledCells = 0;
+  SB_ROWS.forEach(row => {
+    let hasAny = false;
+    for (let b = 0; b < sec.bars; b++) {
+      const key = (sec.startBar + b) + '_' + row.id;
+      if (sbState[key]) { hasAny = true; filledCells++; }
+    }
+    if (hasAny) filledRows++;
+  });
+
+  const msgs = SB_SECTION_FEEDBACK[sec.id];
+  if (!msgs) return;
+  let state = 'empty';
+  if (filledRows >= SB_ROWS.length * 0.6) state = 'full';
+  else if (filledRows > 0) state = 'partial';
+
+  const msg = msgs[state];
+  fb.innerHTML = `<strong style="color:${msg.color};">GUIDE — ${sec.label}</strong>${msg.text}`;
+  fb.style.borderLeftColor = msg.color;
+}
+
+function sbClearSection() {
+  const sec = sbGetActiveSec();
+  SB_ROWS.forEach(row => {
+    for (let b = 0; b < sec.bars; b++) {
+      delete sbState[(sec.startBar + b) + '_' + row.id];
+    }
+  });
+  sbBuildSequencer();
+  sbUpdateFeedback();
+}
+
+function sbClearAll() {
+  sbState = {};
+  sbBuildSequencer();
+  sbBuildOverview();
+  sbUpdateFeedback();
+}
+
+function sbAutoFill() {
+  const sec = sbGetActiveSec();
+  SB_ROWS.forEach(row => {
+    const sugLevel = row.suggest[sec.id] || 0;
+    if (sugLevel > 0) {
+      for (let b = 0; b < sec.bars; b++) {
+        sbState[(sec.startBar + b) + '_' + row.id] = true;
+      }
+    }
+  });
+  sbBuildSequencer();
+  sbUpdateFeedback();
+}
+
+// Simple playback: cycles through bars in current section, triggering filled rows
+let sbPlayStep = 0;
+let sbPlayInterval = null;
+
+function sbTogglePlay() {
+  const btn = document.getElementById('sbPlayBtn');
+  if (sbPlaying) {
+    sbPlaying = false;
+    clearInterval(sbPlayInterval);
+    if (btn) { btn.textContent = '▶ PLAY SECTION'; btn.style.background = ''; }
+  } else {
+    sbPlaying = true;
+    sbPlayStep = 0;
+    const sec = sbGetActiveSec();
+    // Highlight beat
+    if (btn) { btn.textContent = '⏸ STOP'; btn.style.background = 'var(--accent2)'; }
+
+    const stepMs = (60000 / 160) / 4; // 16th note steps but we play per bar (4 beats)
+    const barMs = stepMs * 16; // 1 bar = 16 sixteenth notes
+
+    sbPlayInterval = setInterval(() => {
+      const absBar = sec.startBar + (sbPlayStep % sec.bars);
+      // Flash active bar cells
+      document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
+      const barCells = document.querySelectorAll(`[id^="sbc_${absBar}_"]`);
+      barCells.forEach(c => {
+        c.style.outline = '2px solid rgba(255,255,255,0.6)';
+        setTimeout(() => c.style.outline = '', barMs * 0.8);
+      });
+
+      // Trigger sounds for filled rows
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+      SB_ROWS.forEach(row => {
+        const key = absBar + '_' + row.id;
+        if (sbState[key]) {
+          if (row.id === 'kick')    playKick(now);
+          else if (row.id === 'snare')  playSnare(now);
+          else if (row.id === 'hat')    playClosedHat(now);
+          else if (row.id === 'sub')    sbPlaySub(now);
+          else if (row.id === 'midbass') sbPlayMidBass(now);
+          else if (row.id === 'melody') sbPlayMelody(now);
+          else if (row.id === 'counter') sbPlayCounter(now);
+          else if (row.id === 'atmos') sbPlayAtmos(now);
+        }
+      });
+
+      sbPlayStep++;
+    }, barMs);
+  }
+}
+
+// Simple synth sounds for non-drum elements
+function sbPlaySub(time) {
+  const ctx = getCtx(); const out = getOut();
+  const scale = getActiveScale ? getActiveScale() : null;
+  const rs = scale ? scale.rootSemi : 9; // A
+  const rootFreq = (FULL_NOTE_FREQ || {})[CHROMA_DISPLAY[rs]+'2'] || 55;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.type = 'sine'; osc.frequency.value = rootFreq;
+  g.gain.setValueAtTime(0.55, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.5);
+  osc.connect(g); g.connect(out); osc.start(time); osc.stop(time+0.55);
+}
+
+function sbPlayMidBass(time) {
+  const ctx = getCtx(); const out = getOut();
+  const scale = getActiveScale ? getActiveScale() : null;
+  const rs = scale ? scale.rootSemi : 9;
+  const rootFreq = (FULL_NOTE_FREQ || {})[CHROMA_DISPLAY[rs]+'3'] || 110;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  const filt = ctx.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=800;
+  osc.type = 'sawtooth'; osc.frequency.value = rootFreq;
+  g.gain.setValueAtTime(0.25, time); g.gain.exponentialRampToValueAtTime(0.001, time+0.45);
+  osc.connect(filt); filt.connect(g); g.connect(out); osc.start(time); osc.stop(time+0.5);
+}
+
+function sbPlayMelody(time) {
+  const ctx = getCtx(); const out = getOut();
+  const scale = getActiveScale ? getActiveScale() : null;
+  const rs = scale ? scale.rootSemi : 9;
+  const fifthSemi = scale && scale.intervals[4] !== undefined ? scale.intervals[4] : 7;
+  const freq = (FULL_NOTE_FREQ || {})[CHROMA_DISPLAY[(rs+fifthSemi)%12]+'5'] || 659;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.type = 'sine'; osc.frequency.value = freq;
+  g.gain.setValueAtTime(0, time); g.gain.linearRampToValueAtTime(0.2, time+0.02);
+  g.gain.exponentialRampToValueAtTime(0.001, time+0.6);
+  osc.connect(g); g.connect(out); osc.start(time); osc.stop(time+0.65);
+}
+
+function sbPlayCounter(time) {
+  const ctx = getCtx(); const out = getOut();
+  const scale = getActiveScale ? getActiveScale() : null;
+  const rs = scale ? scale.rootSemi : 9;
+  const thirdSemi = scale && scale.intervals[2] !== undefined ? scale.intervals[2] : 3;
+  const freq = (FULL_NOTE_FREQ || {})[CHROMA_DISPLAY[(rs+thirdSemi)%12]+'5'] || 523;
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.type = 'triangle'; osc.frequency.value = freq;
+  g.gain.setValueAtTime(0, time); g.gain.linearRampToValueAtTime(0.15, time+0.03);
+  g.gain.exponentialRampToValueAtTime(0.001, time+0.5);
+  osc.connect(g); g.connect(out); osc.start(time); osc.stop(time+0.55);
+}
+
+function sbPlayAtmos(time) {
+  const ctx = getCtx(); const out = getOut();
+  const scale = getActiveScale ? getActiveScale() : null;
+  const rs = scale ? scale.rootSemi : 9;
+  const rootFreq = (FULL_NOTE_FREQ || {})[CHROMA_DISPLAY[rs]+'3'] || 110;
+  // Soft pad: multiple detuned sines
+  [0, 7, 12].forEach((semi, i) => {
+    const osc = ctx.createOscillator(); const g = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = rootFreq * Math.pow(2, semi/12) * (1 + (i-1)*0.003);
+    g.gain.setValueAtTime(0, time); g.gain.linearRampToValueAtTime(0.07, time+0.1);
+    g.gain.exponentialRampToValueAtTime(0.001, time+1.2);
+    osc.connect(g); g.connect(out); osc.start(time); osc.stop(time+1.3);
+  });
+}
+
+function sbInit() {
+  sbBuildOverview();
+  sbBuildSequencer();
+  sbUpdateFeedback();
+}
+
 // ======= INIT ALL =======
 buildScalePillUI();
 updateScaleDisplay();
+sbInit();
 buildTensionGrid();
 buildMotifExamples();
 buildDensityGrid();
