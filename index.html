@@ -1555,7 +1555,13 @@
       <button class="btn btn-primary" id="sbPlayBtn" onclick="sbTogglePlay()">▶ PLAY SECTION</button>
       <button class="btn btn-secondary" onclick="sbClearSection()">CLEAR SECTION</button>
       <button class="btn btn-secondary" onclick="sbClearAll()">CLEAR ALL</button>
-      <button class="btn btn-secondary" onclick="sbAutoFill()">💡 AUTO-SUGGEST SECTION</button>
+      <button class="btn btn-secondary" id="sbAutoBtn" onclick="sbAutoFill()">💡 SUGGEST: DnB</button>
+      <div style="display:flex;align-items:center;gap:8px;border-left:1px solid var(--border);padding-left:12px;">
+        <span style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);">BPM</span>
+        <input type="range" id="sbBpmSlider" min="100" max="180" value="170"
+               style="accent-color:var(--accent3);width:90px;" oninput="sbUpdateBpm(this.value)">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent3);min-width:32px;" id="sbBpmDisplay">170</span>
+      </div>
       <div class="sb-score">Completion: <span id="sbScoreNum">0</span>/128 bars filled</div>
     </div>
   </div>
@@ -3513,21 +3519,166 @@ function sbClearAll() {
   sbUpdateFeedback();
 }
 
-function sbAutoFill() {
-  const sec = sbGetActiveSec();
-  SB_ROWS.forEach(row => {
-    const sugLevel = row.suggest[sec.id] || 0;
-    if (sugLevel > 0) {
-      for (let b = 0; b < sec.bars; b++) {
-        sbState[(sec.startBar + b) + '_' + row.id] = true;
-      }
-    }
-  });
-  sbBuildSequencer();
-  sbUpdateFeedback();
+// ── Genre suggestion system ──────────────────────────────────────────────────
+
+const SB_GENRES = ['DnB', 'Jungle', 'Dubstep', 'Electrofunk'];
+let sbGenreIdx = 0;   // cycles 0-3
+let sbSugBpm = 170;
+
+// Per-genre, per-section, per-row: which bars to fill.
+// Pattern strings:
+//   'none'         - no bars
+//   'every'        - all bars
+//   'even'         - bars 0,2,4… (even index)
+//   'odd'          - bars 1,3,5…
+//   'last4'        - last 4 bars
+//   'not_last4'    - all except last 4
+//   'first_half'   - bars 0..floor(n/2)-1
+//   'second_half'  - bars floor(n/2)..n-1
+//   'alt8'         - on for 8 bars, off for 8 (DnB groove variation)
+//   'every_4th'    - every 4th bar (long-form call/response)
+//   'sparse'       - every 4th bar but offset by 2 (off-beat feel)
+//   'builds'       - first_half + density ramps (use same as even for simplicity)
+//   'drop_accent'  - every bar except bars that are multiples of 8 (syncopation)
+
+const SB_PATTERNS = {
+  DnB: {
+    // DnB: 170 BPM. Half-time snare feel. Syncopated kick. Dense hats in drops.
+    // Reese bass locked to kick. Melody appears only at drop. Sub hits on drop.
+    intro:  { kick:'none',     snare:'none',   hat:'every',    sub:'none',   midbass:'none',   melody:'none',        counter:'none', atmos:'every' },
+    build:  { kick:'every',    snare:'even',   hat:'every',    sub:'none',   midbass:'not_last4', melody:'none',     counter:'none', atmos:'first_half' },
+    drop1:  { kick:'every',    snare:'alt8',   hat:'every',    sub:'every',  midbass:'every',  melody:'not_last4',   counter:'none', atmos:'none' },
+    break:  { kick:'none',     snare:'none',   hat:'none',     sub:'none',   midbass:'none',   melody:'every',       counter:'second_half', atmos:'every' },
+    drop2:  { kick:'every',    snare:'alt8',   hat:'every',    sub:'every',  midbass:'every',  melody:'every',       counter:'second_half', atmos:'none' },
+    outro:  { kick:'first_half', snare:'none', hat:'first_half', sub:'none', midbass:'none',   melody:'first_half',  counter:'none', atmos:'every' },
+  },
+  Jungle: {
+    // Jungle: 160-175 BPM. Amen-break feel. Rolling syncopated kicks and snares.
+    // Bass anchored on root (mostly held). Melody sparse. Atmosphere light.
+    intro:  { kick:'none',     snare:'none',   hat:'every',    sub:'none',   midbass:'none',      melody:'none',       counter:'none', atmos:'every' },
+    build:  { kick:'every',    snare:'every',  hat:'every',    sub:'none',   midbass:'every',     melody:'none',       counter:'none', atmos:'every' },
+    drop1:  { kick:'every',    snare:'every',  hat:'every',    sub:'every',  midbass:'every',     melody:'second_half', counter:'none', atmos:'none' },
+    break:  { kick:'first_half', snare:'none', hat:'every',    sub:'every',  midbass:'none',      melody:'every',      counter:'none', atmos:'every' },
+    drop2:  { kick:'every',    snare:'every',  hat:'every',    sub:'every',  midbass:'every',     melody:'every',      counter:'second_half', atmos:'none' },
+    outro:  { kick:'none',     snare:'none',   hat:'first_half', sub:'none', midbass:'first_half', melody:'none',      counter:'none', atmos:'every' },
+  },
+  Dubstep: {
+    // Dubstep: 138-142 BPM. Half-time feel throughout — snare only on bar 3.
+    // Wobble bass is the identity. Sub massive. Melody rare. Long buildups.
+    intro:  { kick:'none',     snare:'none',   hat:'none',     sub:'none',   midbass:'none',      melody:'none',       counter:'none', atmos:'every' },
+    build:  { kick:'every',    snare:'every_4th', hat:'every', sub:'none',   midbass:'last4',     melody:'none',       counter:'none', atmos:'every' },
+    drop1:  { kick:'every',    snare:'alt8',   hat:'none',     sub:'every',  midbass:'every',     melody:'none',       counter:'none', atmos:'none' },
+    break:  { kick:'none',     snare:'none',   hat:'none',     sub:'none',   midbass:'none',      melody:'every',      counter:'none', atmos:'every' },
+    drop2:  { kick:'every',    snare:'alt8',   hat:'none',     sub:'every',  midbass:'every',     melody:'second_half', counter:'none', atmos:'none' },
+    outro:  { kick:'first_half', snare:'none', hat:'none',     sub:'first_half', midbass:'none',  melody:'none',       counter:'none', atmos:'every' },
+  },
+  Electrofunk: {
+    // Electrofunk/GRiZ: 120-132 BPM. Kick on 1 and "and" of 3. Snare on 2&4.
+    // Bass is melodic and present throughout (call-response). Melody is the star.
+    // Counter appears early. Atmosphere sparse.
+    intro:  { kick:'every',    snare:'every',  hat:'every',    sub:'none',   midbass:'every',     melody:'none',       counter:'none', atmos:'first_half' },
+    build:  { kick:'every',    snare:'every',  hat:'every',    sub:'none',   midbass:'every',     melody:'second_half', counter:'none', atmos:'none' },
+    drop1:  { kick:'every',    snare:'every',  hat:'every',    sub:'every',  midbass:'every',     melody:'every',       counter:'second_half', atmos:'none' },
+    break:  { kick:'none',     snare:'none',   hat:'none',     sub:'none',   midbass:'every',     melody:'every',       counter:'every', atmos:'every' },
+    drop2:  { kick:'every',    snare:'every',  hat:'every',    sub:'every',  midbass:'every',     melody:'every',       counter:'every', atmos:'none' },
+    outro:  { kick:'first_half', snare:'first_half', hat:'every', sub:'none', midbass:'first_half', melody:'first_half', counter:'none', atmos:'second_half' },
+  },
+};
+
+// Genre-specific default BPMs
+const SB_GENRE_BPMS = { DnB: 170, Jungle: 170, Dubstep: 140, Electrofunk: 128 };
+
+// Genre colours for the suggest button
+const SB_GENRE_COLORS = {
+  DnB: '#ff4d6d',
+  Jungle: '#00ffaa',
+  Dubstep: '#b070ff',
+  Electrofunk: '#ffd700',
+};
+
+// Resolve a pattern string to an array of bar indices (0-based within section)
+function sbResolvePattern(pattern, n) {
+  if (!pattern || pattern === 'none') return [];
+  if (pattern === 'every')       return Array.from({length:n}, (_,i) => i);
+  if (pattern === 'even')        return Array.from({length:n}, (_,i) => i).filter(i => i%2===0);
+  if (pattern === 'odd')         return Array.from({length:n}, (_,i) => i).filter(i => i%2===1);
+  if (pattern === 'last4')       return Array.from({length:Math.min(4,n)}, (_,i) => n-Math.min(4,n)+i);
+  if (pattern === 'not_last4')   return Array.from({length:Math.max(0,n-4)}, (_,i) => i);
+  if (pattern === 'first_half')  return Array.from({length:Math.floor(n/2)}, (_,i) => i);
+  if (pattern === 'second_half') return Array.from({length:Math.ceil(n/2)}, (_,i) => Math.floor(n/2)+i);
+  if (pattern === 'alt8')        return Array.from({length:n}, (_,i) => i).filter(i => Math.floor(i/8)%2===0);
+  if (pattern === 'every_4th')   return Array.from({length:n}, (_,i) => i).filter(i => i%4===0);
+  if (pattern === 'sparse')      return Array.from({length:n}, (_,i) => i).filter(i => i%4===2);
+  return [];
 }
 
-// Simple playback: cycles through bars in current section, triggering filled rows
+function sbAutoFill() {
+  const sec = sbGetActiveSec();
+  const genre = SB_GENRES[sbGenreIdx];
+  const genrePatterns = SB_PATTERNS[genre];
+  const secPatterns = genrePatterns[sec.id];
+  if (!secPatterns) return;
+
+  // Clear this section first
+  SB_ROWS.forEach(row => {
+    for (let b = 0; b < sec.bars; b++) {
+      delete sbState[(sec.startBar + b) + '_' + row.id];
+    }
+  });
+
+  // Apply genre pattern
+  SB_ROWS.forEach(row => {
+    const pattern = secPatterns[row.id] || 'none';
+    const bars = sbResolvePattern(pattern, sec.bars);
+    bars.forEach(b => {
+      sbState[(sec.startBar + b) + '_' + row.id] = true;
+    });
+  });
+
+  sbBuildSequencer();
+  sbUpdateFeedback();
+
+  // Cycle genre for next press
+  sbGenreIdx = (sbGenreIdx + 1) % SB_GENRES.length;
+  const nextGenre = SB_GENRES[sbGenreIdx];
+  const btn = document.getElementById('sbAutoBtn');
+  if (btn) {
+    btn.textContent = '💡 SUGGEST: ' + nextGenre;
+    btn.style.borderColor = SB_GENRE_COLORS[nextGenre];
+    btn.style.color = SB_GENRE_COLORS[nextGenre];
+  }
+
+  // Update BPM to match the genre we just applied (previous genre)
+  const appliedGenre = SB_GENRES[(sbGenreIdx + SB_GENRES.length - 1) % SB_GENRES.length];
+  sbSugBpm = SB_GENRE_BPMS[appliedGenre];
+  const slider = document.getElementById('sbBpmSlider');
+  const disp   = document.getElementById('sbBpmDisplay');
+  if (slider) slider.value = sbSugBpm;
+  if (disp)   disp.textContent = sbSugBpm;
+
+  // Show a brief flash on the feedback panel describing what was applied
+  const fb = document.getElementById('sbFeedback');
+  if (fb) {
+    const color = SB_GENRE_COLORS[appliedGenre];
+    const msgs = {
+      DnB: `DnB pattern applied at ${sbSugBpm} BPM. Notice: sub bass is ABSENT in the intro and build (frequency vacuum technique). The snare uses alt-8 pattern in drops — that's the half-time feel. Kick and sub lock together at every drop bar.`,
+      Jungle: `Jungle pattern applied at ${sbSugBpm} BPM. Rolling kick and snare in every section from build onward — the Amen break feel. Bass is present early as an anchor. Melody appears late, only in the second half of Drop 1, letting the drums be the star.`,
+      Dubstep: `Dubstep pattern applied at ${sbSugBpm} BPM. Notice the hat-free drops — silence above 8kHz is part of the genre identity. The wobble mid-bass (midbass row) defines the drop. Snare uses the alt-8 half-time feel. Long atmosphere in intro and break.`,
+      Electrofunk: `Electrofunk/GRiZ pattern applied at ${sbSugBpm} BPM. Drums and bass are present in the INTRO — funk establishes groove immediately. Mid-bass is melodic throughout. Counter-melody enters in Drop 1's second half and stays through Drop 2. Atmosphere is minimal.`,
+    };
+    fb.innerHTML = `<strong style="color:${color};">APPLIED: ${appliedGenre} PATTERN</strong>${msgs[appliedGenre] || ''} Press 💡 again to cycle to ${nextGenre}.`;
+    fb.style.borderLeftColor = color;
+  }
+}
+
+// BPM control
+function sbUpdateBpm(val) {
+  sbSugBpm = parseInt(val);
+  const disp = document.getElementById('sbBpmDisplay');
+  if (disp) disp.textContent = sbSugBpm;
+}
+
+// Playback: one bar per interval, bar duration derived from sbSugBpm
 let sbPlayStep = 0;
 let sbPlayInterval = null;
 
@@ -3536,46 +3687,48 @@ function sbTogglePlay() {
   if (sbPlaying) {
     sbPlaying = false;
     clearInterval(sbPlayInterval);
+    document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
     if (btn) { btn.textContent = '▶ PLAY SECTION'; btn.style.background = ''; }
   } else {
     sbPlaying = true;
     sbPlayStep = 0;
     const sec = sbGetActiveSec();
-    // Highlight beat
     if (btn) { btn.textContent = '⏸ STOP'; btn.style.background = 'var(--accent2)'; }
 
-    const stepMs = (60000 / 160) / 4; // 16th note steps but we play per bar (4 beats)
-    const barMs = stepMs * 16; // 1 bar = 16 sixteenth notes
-
-    sbPlayInterval = setInterval(() => {
+    function runTick() {
+      if (!sbPlaying) return;
+      const bpm = sbSugBpm || 170;
+      const barMs = (60000 / bpm) * 4; // 4 beats per bar
       const absBar = sec.startBar + (sbPlayStep % sec.bars);
-      // Flash active bar cells
+
+      // Highlight current bar
       document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
-      const barCells = document.querySelectorAll(`[id^="sbc_${absBar}_"]`);
+      const barCells = document.querySelectorAll('[id^="sbc_' + absBar + '_"]');
       barCells.forEach(c => {
-        c.style.outline = '2px solid rgba(255,255,255,0.6)';
-        setTimeout(() => c.style.outline = '', barMs * 0.8);
+        c.style.outline = '2px solid rgba(255,255,255,0.65)';
+        setTimeout(() => { c.style.outline = ''; }, barMs * 0.85);
       });
 
-      // Trigger sounds for filled rows
+      // Trigger sounds
       const ctx = getCtx();
       const now = ctx.currentTime;
       SB_ROWS.forEach(row => {
-        const key = absBar + '_' + row.id;
-        if (sbState[key]) {
-          if (row.id === 'kick')    playKick(now);
-          else if (row.id === 'snare')  playSnare(now);
-          else if (row.id === 'hat')    playClosedHat(now);
-          else if (row.id === 'sub')    sbPlaySub(now);
+        if (sbState[absBar + '_' + row.id]) {
+          if      (row.id === 'kick')    playKick(now);
+          else if (row.id === 'snare')   playSnare(now);
+          else if (row.id === 'hat')     playClosedHat(now);
+          else if (row.id === 'sub')     sbPlaySub(now);
           else if (row.id === 'midbass') sbPlayMidBass(now);
-          else if (row.id === 'melody') sbPlayMelody(now);
+          else if (row.id === 'melody')  sbPlayMelody(now);
           else if (row.id === 'counter') sbPlayCounter(now);
-          else if (row.id === 'atmos') sbPlayAtmos(now);
+          else if (row.id === 'atmos')   sbPlayAtmos(now);
         }
       });
 
       sbPlayStep++;
-    }, barMs);
+      sbPlayInterval = setTimeout(runTick, barMs);
+    }
+    runTick();
   }
 }
 
@@ -3649,6 +3802,17 @@ function sbInit() {
   sbBuildOverview();
   sbBuildSequencer();
   sbUpdateFeedback();
+  // Set initial button style
+  const btn = document.getElementById('sbAutoBtn');
+  if (btn) {
+    btn.textContent = '💡 SUGGEST: DnB';
+    btn.style.borderColor = SB_GENRE_COLORS['DnB'];
+    btn.style.color = SB_GENRE_COLORS['DnB'];
+  }
+  const slider = document.getElementById('sbBpmSlider');
+  const disp   = document.getElementById('sbBpmDisplay');
+  if (slider) slider.value = 170;
+  if (disp)   disp.textContent = 170;
 }
 
 // ======= INIT ALL =======
