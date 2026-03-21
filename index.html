@@ -3678,57 +3678,83 @@ function sbUpdateBpm(val) {
   if (disp) disp.textContent = sbSugBpm;
 }
 
-// Playback: one bar per interval, bar duration derived from sbSugBpm
+// Playback — Web Audio clock scheduler (no drift)
+// We schedule bars ahead using audioCtx.currentTime, then fire visual
+// updates with a corrected setTimeout tied to the audio clock delta.
 let sbPlayStep = 0;
-let sbPlayInterval = null;
+let sbSchedulerInterval = null;   // setInterval handle for the lookahead scheduler
+let sbNextBarTime = 0;            // next bar's scheduled audioCtx time
+const SB_LOOKAHEAD = 0.15;        // seconds to look ahead when scheduling
+const SB_SCHEDULER_MS = 30;       // how often the scheduler fires (ms)
+
+function sbStopPlay() {
+  sbPlaying = false;
+  if (sbSchedulerInterval) { clearInterval(sbSchedulerInterval); sbSchedulerInterval = null; }
+  document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
+  const btn = document.getElementById('sbPlayBtn');
+  if (btn) { btn.textContent = '▶ PLAY SECTION'; btn.style.background = ''; }
+}
+
+function sbScheduleBar(absBar, audioTime) {
+  const bpm = sbSugBpm || 170;
+  const barSec = (60 / bpm) * 4; // one bar in seconds at current BPM
+
+  // Fire sounds at precise audio time
+  SB_ROWS.forEach(row => {
+    if (sbState[absBar + '_' + row.id]) {
+      if      (row.id === 'kick')    playKick(audioTime);
+      else if (row.id === 'snare')   playSnare(audioTime);
+      else if (row.id === 'hat')     playClosedHat(audioTime);
+      else if (row.id === 'sub')     sbPlaySub(audioTime);
+      else if (row.id === 'midbass') sbPlayMidBass(audioTime);
+      else if (row.id === 'melody')  sbPlayMelody(audioTime);
+      else if (row.id === 'counter') sbPlayCounter(audioTime);
+      else if (row.id === 'atmos')   sbPlayAtmos(audioTime);
+    }
+  });
+
+  // Schedule visual highlight tied to the audio clock, not wall-clock
+  const ctx = getCtx();
+  const msUntil = Math.max(0, (audioTime - ctx.currentTime) * 1000);
+  const barMs = barSec * 1000;
+  setTimeout(() => {
+    if (!sbPlaying) return;
+    document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
+    document.querySelectorAll('[id^="sbc_' + absBar + '_"]').forEach(c => {
+      c.style.outline = '2px solid rgba(255,255,255,0.65)';
+      setTimeout(() => { c.style.outline = ''; }, barMs * 0.82);
+    });
+  }, msUntil);
+}
+
+function sbRunScheduler(sec) {
+  if (!sbPlaying) return;
+  const ctx = getCtx();
+  const bpm = sbSugBpm || 170;
+  const barSec = (60 / bpm) * 4;
+
+  // Schedule any bars whose time falls within the lookahead window
+  while (sbNextBarTime < ctx.currentTime + SB_LOOKAHEAD) {
+    const absBar = sec.startBar + (sbPlayStep % sec.bars);
+    sbScheduleBar(absBar, sbNextBarTime);
+    sbNextBarTime += barSec;
+    sbPlayStep++;
+  }
+}
 
 function sbTogglePlay() {
   const btn = document.getElementById('sbPlayBtn');
   if (sbPlaying) {
-    sbPlaying = false;
-    clearInterval(sbPlayInterval);
-    document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
-    if (btn) { btn.textContent = '▶ PLAY SECTION'; btn.style.background = ''; }
+    sbStopPlay();
   } else {
     sbPlaying = true;
     sbPlayStep = 0;
     const sec = sbGetActiveSec();
+    const ctx = getCtx();
+    sbNextBarTime = ctx.currentTime + 0.05; // small startup offset
     if (btn) { btn.textContent = '⏸ STOP'; btn.style.background = 'var(--accent2)'; }
-
-    function runTick() {
-      if (!sbPlaying) return;
-      const bpm = sbSugBpm || 170;
-      const barMs = (60000 / bpm) * 4; // 4 beats per bar
-      const absBar = sec.startBar + (sbPlayStep % sec.bars);
-
-      // Highlight current bar
-      document.querySelectorAll('.sb-cell').forEach(c => c.style.outline = '');
-      const barCells = document.querySelectorAll('[id^="sbc_' + absBar + '_"]');
-      barCells.forEach(c => {
-        c.style.outline = '2px solid rgba(255,255,255,0.65)';
-        setTimeout(() => { c.style.outline = ''; }, barMs * 0.85);
-      });
-
-      // Trigger sounds
-      const ctx = getCtx();
-      const now = ctx.currentTime;
-      SB_ROWS.forEach(row => {
-        if (sbState[absBar + '_' + row.id]) {
-          if      (row.id === 'kick')    playKick(now);
-          else if (row.id === 'snare')   playSnare(now);
-          else if (row.id === 'hat')     playClosedHat(now);
-          else if (row.id === 'sub')     sbPlaySub(now);
-          else if (row.id === 'midbass') sbPlayMidBass(now);
-          else if (row.id === 'melody')  sbPlayMelody(now);
-          else if (row.id === 'counter') sbPlayCounter(now);
-          else if (row.id === 'atmos')   sbPlayAtmos(now);
-        }
-      });
-
-      sbPlayStep++;
-      sbPlayInterval = setTimeout(runTick, barMs);
-    }
-    runTick();
+    sbSchedulerInterval = setInterval(() => sbRunScheduler(sec), SB_SCHEDULER_MS);
+    sbRunScheduler(sec); // fire immediately to avoid initial delay
   }
 }
 
